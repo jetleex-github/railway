@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.UserMapper">
+
+
+    <delete id="deleteToken">
+        delete  from auth_token where token=#{token}
+    </delete>
+
+    <select id="selectByUsernameAndPassword" resultType="com.eaosoft.railway.entity.User">
+        select * from rw_user where username=#{username} and password=#{password}
+    </select>
+    <select id="selectByUsername" resultType="com.eaosoft.railway.entity.User">
+        select * from rw_user where username=#{username}
+    </select>
+    <select id="selectAll" resultType="com.eaosoft.railway.entity.User">
+
+    </select>
+    <select id="selectByCondition" resultType="com.eaosoft.railway.entity.User">
+        select * from rw_user where route_name like '%${route_name}%' and is_deleted = 1
+    </select>
+
+    <select id="findAllUserUid" resultType="java.lang.String">
+        select uid from rw_user where is_deleted = 1
+    </select>
+    <select id="selectUserNum" resultType="java.lang.Integer">
+        select count(*)  from rw_user
+    </select>
+
+
+</mapper>

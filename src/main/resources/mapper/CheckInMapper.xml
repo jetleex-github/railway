@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.CheckInMapper">
+    <update id="addCheckOut">
+        update rw_check_in r  set off_time = #{offTime}  where TO_DAYS(#{workday})=TO_DAYS(r.workday) and serial_no = #{serialNo}
+    </update>
+
+    <select id="selectCheckIn" resultType="com.eaosoft.railway.entity.CheckIn">
+        select * from rw_check_in r where TO_DAYS(#{workday})=TO_DAYS(r.workday) and serial_no = #{serialNo}
+    </select>
+
+    <select id="selectCheckOut" resultType="com.eaosoft.railway.entity.CheckIn">
+        select * from rw_check_in r where TO_DAYS(#{workday})=TO_DAYS(r.workday) and serial_no = #{serialNo}
+    </select>
+</mapper>

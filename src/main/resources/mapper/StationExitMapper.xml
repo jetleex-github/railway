@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.StationExitMapper">
+
+    <!--<select id="selectExitName" resultType="java.lang.list">
+        select uid,station_exit from rw_station_exit where station_uid=#{stationUid}
+    </select>-->
+    <!--<select id="selectExitName" resultType="java.util.List">
+        select s.station_name,s.uid,e.station_exit FROM rw_station s join rw_station_exit e ON s.uid = e.station_uid
+        where s.uid = #{stationUid}
+    </select>-->
+    <select id="selectExitName" resultType="com.eaosoft.railway.entity.Station">
+        select s.station_name,s.uid,e.station_exit FROM rw_station s join rw_station_exit e ON s.uid = e.station_uid
+        where s.uid = #{stationUid}
+    </select>
+    <select id="selectAll" resultType="com.eaosoft.railway.vo.StationExitVo">
+        select uid,station_exit as stationName ,station_uid from rw_station_exit
+    </select>
+    <!-- <select id="selectAll" resultType="com.eaosoft.railway.entity.StationExit">
+
+     </select>-->
+</mapper>

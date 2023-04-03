@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.NoticeMapper">
+
+    <insert id="addUnreadNotice">
+        insert into rw_unread_notice(notice_uid,user_uid,create_time) values (#{noticeUid},#{userUid},#{createTime})
+    </insert>
+    <delete id="deleteNotice">
+        update rw_notice set update_time = #{updateTime} and is_deleted = 0 where uid = #{uid} and is_deleted = 1;
+    </delete>
+
+    <select id="selectNotice" resultType="com.eaosoft.railway.entity.Notice">
+        select * from rw_notice
+        <where>
+            and create_time > DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+            <if test="username != null and username != ''">
+                and username  like '%${username}%'
+            </if>
+            <if test="title != null and title != ''">
+                and title  like '%${title}%'
+            </if>
+                 and is_deleted = 1
+        </where>
+    </select>
+
+
+    <select id="findNewNotice" resultType="com.eaosoft.railway.entity.Notice">
+        select * from rw_notice where is_deleted = 1 order by create_time desc limit 1
+    </select>
+</mapper>

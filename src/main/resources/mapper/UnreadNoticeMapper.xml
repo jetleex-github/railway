@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.UnreadNoticeMapper">
+
+    <insert id="addUnreadNotice">
+        insert into rw_unread_notice(notice_uid,user_uid,create_time) values (#{noticeUid},#{userUid},#{createTime})
+    </insert>
+    <select id="findUnreadNotice" resultType="com.eaosoft.railway.entity.Notice">
+     select rn.* from rw_notice rn
+         join rw_unread_notice run
+             on rn.uid = run.notice_uid
+    where run.user_uid = #{uid} and run.state = 1
+    </select>
+
+</mapper>
