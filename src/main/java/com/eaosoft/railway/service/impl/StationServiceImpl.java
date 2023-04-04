@@ -40,6 +40,25 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         return list;
     }
 
+
+    /**
+     * 根据站点名称查询站点信息
+     * @param stationName
+     * @return
+     */
+    @Override
+    public Station findStation(String stationName) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("station_name",stationName);
+        Station station = stationMapper.selectOne(wrapper);
+        return station;
+    }
+
+    /**
+     * 根据线路名称查询该线路下的所有站点信息，用于树形菜单
+     * @param routeName
+     * @return
+     */
     @Override
     public List<StationVo> findAllStation(String routeName) {
         QueryWrapper wrapper = new QueryWrapper();

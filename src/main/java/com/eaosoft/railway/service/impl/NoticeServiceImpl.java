@@ -46,7 +46,6 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
      * @param notice
      * @return
      */
-
     //
     @Override
     public int deleteNotice(Notice notice) {
@@ -61,11 +60,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         //int i = noticeMapper.delete(wrapper);
         noticeMapper.updateById(notice);
         int i = noticeMapper.deleteById(notice);
-
-
         return i;
-
-
     }
 
     /**
