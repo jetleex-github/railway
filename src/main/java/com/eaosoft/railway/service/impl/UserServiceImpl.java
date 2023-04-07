@@ -308,4 +308,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         int i = userMapper.selectUserNum();
         return i;
     }
+
+    @Override
+    public User findBySerialNo(String serialNo) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("serial_no",serialNo);
+        User user = userMapper.selectOne(wrapper);
+        return user;
+    }
 }

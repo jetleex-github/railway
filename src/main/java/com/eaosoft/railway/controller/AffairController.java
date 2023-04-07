@@ -57,9 +57,9 @@ public class AffairController {
         if (StringUtils.isBlank(jsonObject.getString("routeName"))) {
             return new RespValue(500, "The routeName cannot empty", null);
         }
-        if (StringUtils.isBlank(jsonObject.getString("userUid"))) {
+     /*   if (StringUtils.isBlank(jsonObject.getString("userUid"))) {
             return new RespValue(500, "The userUid cannot empty", null);
-        }
+        }*/
         if (StringUtils.isBlank(jsonObject.getString("equipSerial"))) {
             return new RespValue(500, "The equipSerial cannot empty", null);
         }
@@ -68,7 +68,7 @@ public class AffairController {
             affair.setDetails(jsonObject.getString("details"));
         }
 
-        affair.setStationUid(jsonObject.getString("stationUid"));
+        // affair.setStationUid(jsonObject.getString("stationUid"));
         affair.setStationExitUid(jsonObject.getString("stationExitUid"));
         affair.setRouteName(jsonObject.getString("routeName"));
         affair.setUserUid(jsonObject.getString("userUid"));
@@ -80,7 +80,6 @@ public class AffairController {
             return new RespValue(200, "success", null);
         }
         return new RespValue(501, "Event creation failure", null);
-
     }
 
 
