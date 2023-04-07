@@ -19,9 +19,6 @@ import java.util.List;
 public interface IUserService extends IService<User> {
 
 
-
-
-
     User login(String username, String password);
 
     User selectByUsername(String username);
@@ -60,6 +57,8 @@ public interface IUserService extends IService<User> {
     User findByEmail(String email);
 
     int findUserNum();
+
+    User findBySerialNo(String serialNo);
 
     /* void addUnreadNotice(String uid, String s);*/
 }
