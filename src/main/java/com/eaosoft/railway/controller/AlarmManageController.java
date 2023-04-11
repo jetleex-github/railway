@@ -93,43 +93,46 @@ public class AlarmManageController {
     /**
      * 查询报警记录,
      * 若有设备名，则根据设备名查询
+     *
      * @param reqValue
      * @return
      */
     @PostMapping("/selectAlarm.do")
-    public RespValue selectAlarm(@RequestBody ReqValue reqValue){
+    public RespValue selectAlarm(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
         String equipName = jsonObject.getString("equipName");
-        PageInfo<AlarmManage> pageInfo = alarmManageService.selectAlarm(currentPage,pageSize,equipName);
-        return new RespValue(200,"success",pageInfo);
+        PageInfo<AlarmManage> pageInfo = alarmManageService.selectAlarm(currentPage, pageSize, equipName);
+        return new RespValue(200, "success", pageInfo);
     }
 
     /**
      * 查询未处理的警报
+     *
      * @param reqValue
      * @return
      */
     @PostMapping("/selectAlarmByState.do")
-    public RespValue selectAlarmByState(@RequestBody ReqValue reqValue){
+    public RespValue selectAlarmByState(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
-        PageInfo<AlarmManage> pageInfo = alarmManageService.selectAlarmByState(currentPage,pageSize);
-        return new RespValue(200,"success",pageInfo);
+        PageInfo<AlarmManage> pageInfo = alarmManageService.selectAlarmByState(currentPage, pageSize);
+        return new RespValue(200, "success", pageInfo);
     }
 
 
     /**
      * 处理警报
+     *
      * @param reqValue
      * @return
      */
     @PostMapping("/dealAlarm")
-    public RespValue dealAlarm(@RequestBody ReqValue reqValue){
+    public RespValue dealAlarm(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
 

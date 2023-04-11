@@ -91,6 +91,9 @@ public class EquipController {
      * 查找设备类型
      * @param reqValue
      * @return
+     * 声音
+     * 备注
+     * 标注
      */
     @PostMapping("/findEquipName.do")
     public RespValue findEquipName(@RequestBody ReqValue reqValue){

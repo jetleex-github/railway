@@ -55,6 +55,7 @@ public class ShiroConfig {
         map.put("/webjars/**", "anon");
         map.put("/railway/login/**","anon");
         map.put("/**.html", "anon");
+        map.put("/**/sse","anon");
         map.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);
 
