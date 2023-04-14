@@ -31,9 +31,22 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         return list;
     }
 
+    /**
+     *  将图片地址存入数据库
+     * @param picture
+     */
     @Override
     public void insertPictures(Picture picture) {
         pictureMapper.insert(picture);
+    }
+
+    @Override
+    public List<Picture> selectPictureByStationUid(String stationUid) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("station_uid",stationUid);
+        wrapper.eq("flag",0);
+        List list = pictureMapper.selectList(wrapper);
+        return list;
     }
 
     @Override

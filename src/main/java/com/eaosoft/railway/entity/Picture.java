@@ -65,5 +65,5 @@ public class Picture implements Serializable {
     private String remark;
 
     @TableField(exist = false) // 用于接受坐标数组，表示数据库中并不存在该列
-   private String[] coordinate;
+   private int[][] coordinate;
 }

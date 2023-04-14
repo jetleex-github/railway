@@ -19,5 +19,7 @@ public interface IPictureService extends IService<Picture> {
 
     void insertPictures(Picture picture);
 
+    List<Picture> selectPictureByStationUid(String stationUid);
+
     int addResult(Picture picture);
 }
