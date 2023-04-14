@@ -101,7 +101,7 @@ public class LoginController {
             respVo.setToken(uuid);
             return new RespValue(200, "登录成功", respVo);
         } catch (Exception e) {
-            // 登录成功设置登陆状态
+            // 登录失败设置登陆状态
             loginLog.setState("登录失败");
             // 将登录日志添加到数据库
             loginLogService.insertLoginLog(loginLog);

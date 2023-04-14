@@ -16,4 +16,8 @@ import java.util.List;
 public interface IPictureService extends IService<Picture> {
 
     List findPicture();
+
+    void insertPictures(Picture picture);
+
+    int addResult(Picture picture);
 }

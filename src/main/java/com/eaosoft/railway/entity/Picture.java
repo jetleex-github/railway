@@ -56,7 +56,7 @@ public class Picture implements Serializable {
     private String userUid;
 
     @ApiModelProperty("判图人声音")
-    private byte[] voice;
+    private String voice;
 
     @ApiModelProperty("判图标记")
     private String label;

@@ -30,4 +30,15 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         List list = pictureMapper.selectList(wrapper);
         return list;
     }
+
+    @Override
+    public void insertPictures(Picture picture) {
+        pictureMapper.insert(picture);
+    }
+
+    @Override
+    public int addResult(Picture picture) {
+        int i = pictureMapper.updateById(picture);
+        return i;
+    }
 }
