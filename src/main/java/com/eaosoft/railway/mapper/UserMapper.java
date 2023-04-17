@@ -35,4 +35,6 @@ public interface UserMapper extends BaseMapper<User> {
 
 
     int selectUserNum();
+
+    String findStationUidByUserUid(@Param("userUid") String uid);
 }
