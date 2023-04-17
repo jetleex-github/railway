@@ -57,6 +57,10 @@ public class ShiroConfig {
         map.put("/**.html", "anon");
         map.put("/base/**","anon");
         map.put("/railway/picture/subscribe","anon");
+        map.put("/sse/**","anon");
+       // map.put("/railway/sse/**","anon");
+        map.put("/base/**","anon");
+        map.put("/railway/picture/subscribe","anon");
         //map.put("/sse/**","anon");
        // map.put("/railway/sse/**","anon");
         map.put("/**", "authc");
