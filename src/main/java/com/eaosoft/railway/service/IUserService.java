@@ -60,5 +60,8 @@ public interface IUserService extends IService<User> {
 
     User findBySerialNo(String serialNo);
 
+    // 根据userUid，查询其所在站点uid
+    String findStationUidByUserUid(String uid);
+
     /* void addUnreadNotice(String uid, String s);*/
 }

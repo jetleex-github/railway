@@ -316,4 +316,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User user = userMapper.selectOne(wrapper);
         return user;
     }
+
+    @Override
+    public String findStationUidByUserUid(String uid){
+        String stationUid = userMapper.findStationUidByUserUid(uid);
+        return stationUid;
+    }
+
+
 }

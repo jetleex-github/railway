@@ -75,6 +75,7 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
     @Override
     public int addStation(Station station) {
         int i = stationMapper.insert(station);
+
         return i;
     }
 

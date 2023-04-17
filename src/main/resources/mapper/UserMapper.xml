@@ -26,6 +26,11 @@
     <select id="selectUserNum" resultType="java.lang.Integer">
         select count(*)  from rw_user
     </select>
+    <select id="findStationUidByUserUid" resultType="java.lang.String">
+        select s.uid from rw_station s
+            join rw_user u on s.station_name = u.station
+                     where u.uid = #{userUid} and u.is_deleted = 1
+    </select>
 
 
 </mapper>

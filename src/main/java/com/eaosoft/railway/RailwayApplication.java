@@ -11,6 +11,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @MapperScan("com.eaosoft.railway.mapper")
 @ComponentScan(basePackages = {"com.eaosoft.shiro"})
 @ComponentScan(basePackages = {"com.eaosoft.railway"})
+@ComponentScan(basePackages = {"com.eaosoft.sse"})
 public class RailwayApplication {
 
 	public static void main(String[] args) {
