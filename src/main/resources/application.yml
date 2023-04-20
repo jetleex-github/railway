@@ -2,5 +2,11 @@ anon:
   url:
     - /railway/login/login.do
 
+spring:
+  mvc:
+  servlet:
+    multipart:
+      max-file-size: 10MB  		# Set the maximum size of a single file to 10MB
+      max-request-size: 100MB  	# Set multiple file sizes to 100MB
 
 

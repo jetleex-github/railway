@@ -3,6 +3,9 @@ package com.eaosoft.railway.mapper;
 import com.eaosoft.railway.entity.Picture;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +19,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PictureMapper extends BaseMapper<Picture> {
 
+
+    Picture selectOneByStationUid(@Param("stationUid") String stationUid);
 }

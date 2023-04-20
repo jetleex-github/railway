@@ -45,12 +45,25 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("station_uid",stationUid);
         wrapper.eq("flag",0);
+
         List list = pictureMapper.selectList(wrapper);
         return list;
     }
 
     @Override
     public int addResult(Picture picture) {
+        int i = pictureMapper.updateById(picture);
+        return i;
+    }
+
+    @Override
+    public Picture selectOneByStationUid(String stationUid) {
+        Picture picture = pictureMapper.selectOneByStationUid(stationUid);
+        return picture;
+    }
+
+    @Override
+    public int passCheck(Picture picture) {
         int i = pictureMapper.updateById(picture);
         return i;
     }
