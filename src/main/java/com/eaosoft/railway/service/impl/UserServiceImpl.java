@@ -1,5 +1,6 @@
 package com.eaosoft.railway.service.impl;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -13,14 +14,18 @@ import com.eaosoft.railway.service.AuthTokenService;
 import com.eaosoft.railway.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.utils.MD5Utils;
+import com.eaosoft.railway.utils.MemberExcelListener;
+import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
@@ -279,11 +284,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
-    public User findSerialNo(String serialNo) {
+    public int findSerialNo(String serialNo) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("serial_no",serialNo);
         User user = userMapper.selectOne(wrapper);
-        return user;
+        if (user ==null){
+            return 0;
+        }
+        return 1;
     }
 
     @Override
@@ -321,6 +329,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public String findStationUidByUserUid(String uid){
         String stationUid = userMapper.findStationUidByUserUid(uid);
         return stationUid;
+    }
+
+    @Override
+    public List<User> exportModel(String uid) {
+        List<User> user = userMapper.exportModel(uid);
+        return user;
+    }
+
+    // 批量导入人员信息
+    @Override
+    public void importUser(MultipartFile file, IUserService userService){
+        try {
+            EasyExcel.read(file.getInputStream(), User.class, new MemberExcelListener(userService)).sheet().doRead();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 导出今日导入的人员信息
+    @Override
+    public List<UserVo> exportUser() {
+        List<UserVo> userVos = userMapper.exportUser();
+        return userVos;
+    }
+
+    // 将普通用户设为管理员
+    @Override
+    public int changeIdentity(User user) {
+      /*  QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("uid",uid);
+        wrapper.eq("station","");
+        wrapper.eq("caption",0);*/
+        int i = userMapper.updateById(user);
+        return i;
     }
 
 

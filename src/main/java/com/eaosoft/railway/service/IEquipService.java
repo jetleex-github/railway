@@ -30,4 +30,6 @@ public interface IEquipService extends IService<Equip> {
     int removeBound(Equip equip);
 
     Equip findEquipBySerialNo(String serialNo);
+
+    int equipRepair(String serialNo);
 }

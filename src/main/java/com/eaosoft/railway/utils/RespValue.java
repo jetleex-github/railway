@@ -11,4 +11,5 @@ public class RespValue {
     private Integer code;
     private String info;
     private Object data;
+
 }

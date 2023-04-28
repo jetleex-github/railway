@@ -7,6 +7,7 @@ import com.eaosoft.railway.entity.LoginLog;
 import com.eaosoft.railway.mapper.AlarmManageMapper;
 import com.eaosoft.railway.service.IAlarmManageService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.eaosoft.railway.vo.AlarmVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,17 @@ public class AlarmManageServiceImpl extends ServiceImpl<AlarmManageMapper, Alarm
         List<AlarmManage> list = alarmManageMapper.selectList(wrapper);
         PageInfo<AlarmManage> pageInfo = new PageInfo<>(list);
         return pageInfo;
+    }
+
+    @Override
+    public int dealAlarm(AlarmManage alarmManage) {
+        int i = alarmManageMapper.updateById(alarmManage);
+        return i;
+    }
+
+    @Override
+    public List<AlarmVo> alarmInfoExport(String stationUid) {
+        List<AlarmVo>  list = alarmManageMapper.alarmInfoExport(stationUid);
+        return list;
     }
 }

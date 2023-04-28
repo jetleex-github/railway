@@ -1,5 +1,6 @@
 package com.eaosoft.railway.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -7,17 +8,21 @@ import com.eaosoft.railway.entity.AlarmManage;
 import com.eaosoft.railway.entity.Equip;
 import com.eaosoft.railway.service.IAlarmManageService;
 import com.eaosoft.railway.service.IEquipService;
+import com.eaosoft.railway.utils.MemberExcelListener;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
+import com.eaosoft.railway.vo.AlarmVo;
+import com.eaosoft.railway.vo.DownExcel;
+import com.eaosoft.railway.vo.PictureVo;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * <p>
@@ -48,19 +53,22 @@ public class AlarmManageController {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         AlarmManage alarm = new AlarmManage();
+        String serialNo = jsonObject.getString("serialNo");
+        // System.out.println("serialNo======>"+serialNo);
         alarm.setEquipSerial(jsonObject.getString("serialNo"));
         // 通过设备序列号查找设备信息
-        Equip equip = equipService.findEquipBySerialNo(alarm.getSerialNo());
+        Equip equip = equipService.findEquipBySerialNo(alarm.getEquipSerial());
         alarm.setStationExitUid(equip.getStationExitUid());
         alarm.setStationUid(equip.getStationUid());
         alarm.setEquipName(equip.getEquipName());
+
         if (jsonObject.getInteger("grade") != null) {
             alarm.setGrade(jsonObject.getInteger("grade"));
         }
-        if (StringUtils.isBlank(jsonObject.getString("ipAddr"))) {
-            return new RespValue(500, "The ipAddr cannot empty", null);
+        if (!StringUtils.isBlank(jsonObject.getString("ipAddr"))) {
+            alarm.setIpAddr(jsonObject.getString("ipAddr"));
+           // return new RespValue(500, "The ipAddr cannot empty", null);
         }
-        alarm.setIpAddr(jsonObject.getString("ipAddr"));
         if (!StringUtils.isBlank(jsonObject.getString("content"))) {
             alarm.setContent(jsonObject.getString("content"));
         }
@@ -131,14 +139,61 @@ public class AlarmManageController {
      * @param reqValue
      * @return
      */
-    @PostMapping("/dealAlarm")
+    @PostMapping("/dealAlarm.do")
     public RespValue dealAlarm(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-
-
-        return null;
+        AlarmManage alarmManage = new AlarmManage();
+        alarmManage.setUid(jsonObject.getString("uid"));
+        if (StringUtils.isBlank(jsonObject.getString("userUid"))) {
+            return new RespValue(500, "The userUid cannot empty", null);
+        }
+        alarmManage.setUserUid(jsonObject.getString("userUid"));
+        alarmManage.setDealTime(LocalDateTime.now());
+        if (!StringUtils.isBlank(jsonObject.getString("solution"))) {
+            alarmManage.setSolution(jsonObject.getString("solution"));
+        }
+        int i = alarmManageService.dealAlarm(alarmManage);
+        if (i != 0) {
+            return new RespValue(200, "success", null);
+        }
+        return new RespValue(500, "error", null);
     }
+
+    /**
+     * 安检门报警导出
+     * @param response
+     * @param stationUid
+     */
+    @GetMapping("/alarmInfoExport.do")
+    //public void alarmInfoExport(HttpServletResponse response, @RequestBody ReqValue reqValue){
+    public void alarmInfoExport(HttpServletResponse response,  String stationUid){
+       /* Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        String stationUid = jsonObject.getString("stationUid");*/
+        // 获取报警数据
+        List<AlarmVo> list = alarmManageService.alarmInfoExport(stationUid);
+
+        // 获取消息头
+        response.setHeader("content-disposition","attachment;filename=alarmInfoExport_"+System.currentTimeMillis()+".xlsx");
+        // 生成excel并导出
+        try {
+            EasyExcel.write(response.getOutputStream(), AlarmVo.class).sheet("智能识别设备报警数据导出").doWrite(list);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+  /*  @PostMapping("/invoke.do")
+    public void invoke( @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
+        EasyExcel.read(file.getInputStream(), AlarmVo.class, new MemberExcelListener()).sheet().doRead();
+    }*/
+
+
+
+
 
 
 }

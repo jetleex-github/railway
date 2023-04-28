@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- Where are log files -->
+    <property name="LOG_HOME" value="./" />
+    <!-- Console log output -->
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 格式化输出：%d:表示日期 %thread:表示线程名 %-5level:级别从左显示5个字符宽度-->
+            <pattern>%d{HH:mm:ss.SSS} [%thread] > %green(%-5level) %cyan(%logger{35}) - %m%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Log file debug output -->
+    <appender name="File" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>C:/logs/%d{yyyy-MM-dd}.log.zip</fileNamePattern>
+            <!--日志最大保存时间-->
+            <maxHistory>365</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} > %-5level %X{X-B3-TraceId:-} ${springAppName:-} %logger{35} %m%n</pattern>
+        </encoder>
+    </appender>
+    <!--debug:级别最高级别 开发
+        info: 信息
+        error:错误级别 项目上线
+    -->
+    <root level="info">
+        <appender-ref ref="Console"/>
+        <appender-ref ref="File"/>
+    </root>
+</configuration>

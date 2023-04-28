@@ -26,4 +26,6 @@ public interface IPictureService extends IService<Picture> {
     Picture selectOneByStationUid(String stationUid);
 
     int passCheck(Picture picture);
+
+    Picture selectUidByUrl(String frontUrl);
 }

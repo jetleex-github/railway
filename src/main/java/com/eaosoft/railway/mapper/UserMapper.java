@@ -2,11 +2,13 @@ package com.eaosoft.railway.mapper;
 
 import com.eaosoft.railway.entity.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.eaosoft.railway.vo.UserVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -37,4 +39,8 @@ public interface UserMapper extends BaseMapper<User> {
     int selectUserNum();
 
     String findStationUidByUserUid(@Param("userUid") String uid);
+
+    List<User> exportModel(@Param("uid") String uid);
+
+    List<UserVo> exportUser();
 }

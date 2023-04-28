@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
 @SpringBootTest
@@ -55,6 +56,12 @@ class RealwayApplicationTests {
 				+"\\"+imagePath.substring(15,17)
 				+"\\"+imagePath;
 		System.out.println(path);
+	}
+
+	@Test
+	public void test03(){
+		Date date = new Date();
+		System.out.println(date);
 	}
 
 

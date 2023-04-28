@@ -1,5 +1,6 @@
 package com.eaosoft.railway.controller;
 
+import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -8,19 +9,27 @@ import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.ILoginLogService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MD5Utils;
+import com.eaosoft.railway.utils.MemberExcelListener;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
+import com.eaosoft.railway.vo.AlarmVo;
+import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageInfo;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -44,43 +53,21 @@ public class UserController {
     private ILoginLogService loginLogService;
 
 
-
-
-    /*@PostMapping("/findUserNum")
-    public RespValue findUserNum(){
-        int num =userService.findUserNum();
-        return new RespValue(200,"success",num);
-    }*/
-
-
-    /**
-     * 登录
-     * @param reqValue
-     * @return
-     */
-/*
-    @RequestMapping("/login.do")
-    public RespValue login(@RequestBody ReqValue reqValue){
-        Object requestDatas = reqValue.getRequestDatas();
-        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-        String username = jsonObject.getString("username");
-        String password = jsonObject.getString("password");
-        String s = MD5Utils.md5(password);
-        User user = userService.login(username, s);
-        if (user != null){
-            if (user.getState() == 0){
-                return new RespValue(500,"This account has been frozen",null);
+    public String getUserSerial() {
+        Boolean a = true;
+        String substring = "";
+        while (a) {
+            String str = String.valueOf(System.currentTimeMillis());
+            // 取后四位为编号
+            substring = str.substring(str.length() - 4);
+            // 验证编号是否重复
+            int i = userService.findSerialNo(substring);
+            if (i == 0) {
+                a = false;
             }
-            user.setPassword(password);
-            String token = userService.getToken(user);
-            RespVo respVo = new RespVo();
-            respVo.setData(user);
-            respVo.setToken(token);
-            return new RespValue(200,"success",respVo);
         }
-        return new RespValue(500,"The account or password is incorrect",null);
+        return substring;
     }
-*/
 
     /**
      * addUser
@@ -107,6 +94,7 @@ public class UserController {
         User user1 = new User();
         user1.setUsername(jsonObject.getString("username"));
 
+        // 判断密码是否为空
         if (StringUtils.isBlank(jsonObject.getString("password"))) {
             return new RespValue(500, "The password cannot be empty", null);
         }
@@ -122,21 +110,8 @@ public class UserController {
                 // 添加管理员，只添加所在线路，不添加站点
                 user1.setRouteName(jsonObject.getString("routeName"));
                 user1.setPosition("管理员");
-
-                //根据当前时间，设置用户编号
-                Boolean a = true;
-                while (a) {
-                    String str = String.valueOf(System.currentTimeMillis());
-                    // 取后四位为编号
-                    String substring = str.substring(str.length() - 4);
-                    user1.setSerialNo("G" + substring);
-                    // 验证编号是否重复
-                    User u = userService.findSerialNo(user1.getSerialNo());
-                    if (u == null) {
-
-                        a = false;
-                    }
-                }
+                String userSerial = getUserSerial();
+                user1.setSerialNo("G" + userSerial);
             } else {
                 // 添加普通员工，添加所在线路和站点名称
                 user1.setRouteName(jsonObject.getString("routeName"));
@@ -416,6 +391,78 @@ public class UserController {
         return new RespValue(500, "error", null);
     }
 
+
+    /**
+     * 批量导入用户模板导出
+     *
+     * @param response
+     */
+    @GetMapping("/exportModel.do")
+    public void exportModel(HttpServletResponse response) {
+        List<User> user = userService.exportModel("1638081879957639170");
+        System.out.println("userVo===>" + user);
+        // 获取消息头
+        response.setHeader("content-disposition", "attachment;filename=alarmInfoExport_" + System.currentTimeMillis() + ".xlsx");
+        // 生成excel并导出
+        try {
+            EasyExcel.write(response.getOutputStream(), User.class).sheet("用户导入模板").doWrite(user);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 批量人员信息后，将信息再导出
+     *
+     * @param file
+     * @throws IOException
+     */
+    @PostMapping("/invokeUser.do")
+    public void invokeAdmin(@RequestParam(value = "file", required = false) MultipartFile file,
+                            HttpServletResponse response) {
+        userService.importUser(file, userService);
+
+        // 查询今天创建的人员信息
+        List<UserVo> userVos = userService.exportUser();
+        for (UserVo userVo : userVos) {
+            userVo.setPassword("123456");
+        }
+        for (int i = 0; i < userVos.size(); i++) {
+            System.out.println(userVos.get(i));
+        }
+        // 获取消息头
+        response.setHeader("content-disposition", "attachment;filename=importUser_" + System.currentTimeMillis() + ".xlsx");
+        // 生成excel并导出
+        try {
+            EasyExcel.write(response.getOutputStream(), UserVo.class).sheet("用户信息").doWrite(userVos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    /**
+     * 修改身份，将普通人员设为管理员
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/changeIdentity.do")
+    public RespValue changeIdentity(@RequestBody ReqValue reqValue) {
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+
+        User user = new User();
+        user.setUid(jsonObject.getString("userUid"));
+        user.setCaption(0);
+        user.setStation("");
+        int i = userService.changeIdentity(user);
+        if (i != 0) {
+            return new RespValue(200,"success",null);
+        }
+        return new RespValue(500,"error",null);
+    }
 
 }
 

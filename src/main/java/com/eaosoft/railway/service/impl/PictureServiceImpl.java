@@ -67,4 +67,12 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         int i = pictureMapper.updateById(picture);
         return i;
     }
+
+    @Override
+    public Picture selectUidByUrl(String frontUrl) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("front_picture",frontUrl);
+        Picture picture = pictureMapper.selectOne(wrapper);
+        return picture;
+    }
 }

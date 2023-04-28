@@ -66,11 +66,25 @@ public class AlarmManage implements Serializable {
     @ApiModelProperty("报警内容")
     private String content;
 
+    @ApiModelProperty("解决方式")
+    private String solution;
+
     @ApiModelProperty("设备名称")
     private String equipName;
+
+    @ApiModelProperty("处理人员uid")
+    private String userUid;
+
+    @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dealTime;
+
 
     @ApiModelProperty("是否删除（0-已删除，1-未删除）")
     @TableLogic(value = "1",delval = "0")
     private Integer isDeleted;
+
+
 
 }

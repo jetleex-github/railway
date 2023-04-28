@@ -9,31 +9,18 @@ import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
 import com.eaosoft.railway.utils.UploadUtils;
-
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.eaosoft.railway.vo.PictureVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import reactor.core.publisher.Flux;
-import sun.net.www.content.image.jpeg;
+
 
 
 /**
@@ -80,18 +67,22 @@ public class PictureController {
      * @param stationUid 站点uid
      */
     @PostMapping("/insertPictures.do")
-    public void insertPictures01(
+    public RespValue insertPictures01(
             @RequestParam(value = "rightFile", required = false) MultipartFile rightFile,
             @RequestParam(value = "leftFile", required = false) MultipartFile leftFile,
             @RequestParam(value = "frontFile", required = false) MultipartFile frontFile,
             String stationUid) {
+
+        // 正面照片不能为空
+        if (frontFile == null) {
+            return new RespValue(500, "The frontPicture cannot empty", null);
+        }
 
         // 获取照片存储的地址
         String rightUrl = "";
         String leftUrl = "";
         String frontUrl = "";
 
-        System.out.println("leftFile=======>" + rightFile);
         try {
             if (rightFile != null) {
                 rightUrl = UploadUtils.upload(rightFile);
@@ -105,6 +96,7 @@ public class PictureController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
         Picture picture = new Picture();
 
@@ -123,37 +115,11 @@ public class PictureController {
             e.printStackTrace();
         }
 
-        System.out.println("picture====>" + picture);
-
-
+        // 通过照片地址查询该条信息的uid，并返回
+        Picture p = pictureService.selectUidByUrl(frontUrl);
+        return new RespValue(200, "success", p.getUid());
     }
 
-    /**
-     * 每秒向前端发送一条消息
-     *
-     * @return
-     */
-    @RequestMapping(value = "/sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<String>> sse(@RequestBody ReqValue reqValue) {
-        Object requestDatas = reqValue.getRequestDatas();
-        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-        String stationUid = jsonObject.getString("stationUid");
-        List<Picture> pictureList = pictureService.selectPictureByStationUid(stationUid);
-        // List list = pictureService.findPicture();
-
-       /* while (true){
-            List<Picture> pictureList = pictureService.selectPictureByStationUid(stationUid);
-            return Flux.interval(Duration.ofSeconds(1))
-                    .map(sequence -> )
-                    //.map(sequence -> ServerSentEvent.builder("SSE-" + pictureList).build());
-        }*/
-        //return Flux.interval(Duration.ofSeconds(1)).map(sequence -> ServerSentEvent.builder("SSE - " + sequence).build());
-        return Flux.interval(Duration.ofSeconds(1))
-                .map(sequence -> ServerSentEvent
-                        .builder("SSE - " + pictureService.selectPictureByStationUid(stationUid))
-                        .build());
-
-    }
 
 
     /**
@@ -191,9 +157,20 @@ public class PictureController {
         if (!StringUtils.isBlank(request.getParameter("remark"))) {
             picture.setRemark(request.getParameter("remark"));
         }
+        picture.setUserUid(request.getParameter("userUid"));
         // 修改照片状态为以判图
         picture.setFlag(1);
         int i = pictureService.addResult(picture);
+
+        // 获取站点uid
+        String stationUid = picture.getStationUid();
+        // 查询该站点下是否还存在需要判断的图片
+        try {
+            selectPictureByStationUid(stationUid);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         if (i != 0) {
             return new RespValue(200, "success", null);
         }
@@ -242,11 +219,15 @@ public class PictureController {
         // List<Picture> pictureList = pictureService.selectPictureByStationUid(stationUid);
 
         // 查询出最先需要判图的照片信息
-         Picture picture =  pictureService.selectOneByStationUid(stationUid);
+        Picture picture = pictureService.selectOneByStationUid(stationUid);
 
         PictureVo pictureVo = new PictureVo();
         if (picture != null) {
+            // 返回数据的uid
             pictureVo.setUid(picture.getUid());
+            // 站点uid
+            pictureVo.setStationUid(picture.getStationUid());
+
             if (!StringUtils.isBlank(picture.getLeftPicture())) {
 
                 // 通过文件名获取文件地址，并将文件转换成base64的字符流
@@ -256,13 +237,13 @@ public class PictureController {
             }
             if (!StringUtils.isBlank(picture.getFrontPicture())) {
                 //picture.setFrontPicture(fileSavePath + SEPARATOR + picture.getFrontPicture());
-                File file = new File(picture.getFrontPicture());
+
                 String frontPicture = getLocalImage(picture.getFrontPicture());
                 pictureVo.setFrontPicture(frontPicture);
             }
             if (!StringUtils.isBlank(picture.getRightPicture())) {
                 //picture.setRightPicture(fileSavePath + SEPARATOR + picture.getRightPicture());
-                File file = new File(picture.getRightPicture());
+
                 String rightPicture = getLocalImage(picture.getRightPicture());
                 pictureVo.setRightPicture(rightPicture);
             }
@@ -270,7 +251,7 @@ public class PictureController {
         //将查询到的数据发送给前端
         push(stationUid, pictureVo);
 
-       // List<PictureVo> imageData = new ArrayList<>();
+        // List<PictureVo> imageData = new ArrayList<>();
 
         //PictureVo pictureVo = new PictureVo();
 
@@ -394,6 +375,7 @@ public class PictureController {
 
     /**
      * 将文件转换成base64的数据流
+     *
      * @param imagePath
      * @return
      */
@@ -401,13 +383,13 @@ public class PictureController {
         //  String imagePath = "C:/images/image.jpg";
 
         // 拼接获取文件所在路径
-        String path =fileSavePath + SEPARATOR
-                + imagePath.substring(0,7) +SEPARATOR
-                + imagePath.substring(7,11) +SEPARATOR
-                + imagePath.substring(11,13) +SEPARATOR
-                +imagePath.substring(13,15) + SEPARATOR
-                +imagePath.substring(15,17) +SEPARATOR
-                +imagePath;
+        String path = fileSavePath + SEPARATOR
+                + imagePath.substring(0, 7) + SEPARATOR
+                + imagePath.substring(7, 11) + SEPARATOR
+                + imagePath.substring(11, 13) + SEPARATOR
+                + imagePath.substring(13, 15) + SEPARATOR
+                + imagePath.substring(15, 17) + SEPARATOR
+                + imagePath;
         // 获取图片
         File imageFile = new File(path);
         // 获取文件名
@@ -421,7 +403,7 @@ public class PictureController {
         in.read(imageBytes);
         in.close();
 
-       // byte[] imageBytes = new byte[(int) imageFile.length()];
+        // byte[] imageBytes = new byte[(int) imageFile.length()];
         // 添加base64字节头，拼接成base64的完整格式
         String base64Image = "data:image/" + substring + " ;base64," + Base64.getEncoder().encodeToString(imageBytes);
         return base64Image;
@@ -451,26 +433,12 @@ public class PictureController {
 
         JSONObject response = new JSONObject();
         response.put(fileName, base64Image);
-       *//* HttpHeaders headers = new HttpHeaders();
+       HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response.toString(), headers, HttpStatus.OK);*//*
+        return new ResponseEntity<>(response.toString(), headers, HttpStatus.OK);
         return response;
     }*/
 
-    private byte[] getImageBytes(String imageUrl) throws IOException {
-        URL url = new URL(imageUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        InputStream in = connection.getInputStream();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = in.read(buffer)) != -1) {
-            out.write(buffer, 0, len);
-        }
-        in.close();
-        return out.toByteArray();
-    }
 
 
     /**
@@ -515,64 +483,53 @@ public class PictureController {
         return "over";
     }
 
-    //path 为图片在服务器的绝对路径
-    public static void getPhoto(HttpServletResponse response, String path) throws Exception {
-        File file = new File(path);
-        FileInputStream fis;
-        fis = new FileInputStream(file);
 
-        long size = file.length();
-        byte[] temp = new byte[(int) size];
-        fis.read(temp, 0, (int) size);
-        fis.close();
-        byte[] data = temp;
-        response.setContentType("image/png");
-        OutputStream out = response.getOutputStream();
-        out.write(data);
-        out.flush();
-        out.close();
-
-    }
-    /*public String push(String stationUid,List<Picture> pictureList) throws IOException {
-        SseEmitter sseEmitter = sseCache.get(stationUid);
-        System.out.println("stationUid===>"+stationUid);
-        System.out.println("content001===>"+pictureList);
-
-        System.out.println("seeEmitter===>"+sseEmitter);
-        System.out.println();
-        if (sseEmitter != null) {
-            System.out.println("content===>"+pictureList);
-            sseEmitter.send(pictureList);
-        }
-        return "over";
-
-    }*/
-
-
+    /**
+     * 通过安检
+     * @param reqValue
+     * @return
+     */
     @PostMapping("/passCheck.do")
-    public RespValue passCheck(@RequestBody ReqValue reqValue) {
+    public void passCheck(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Picture picture = new Picture();
-        if (StringUtils.isBlank(jsonObject.getString("uid"))){
-            return new RespValue(500,"The uid cannot empty",null);
-        }
+      /*  if (StringUtils.isBlank(jsonObject.getString("uid"))) {
+            return new RespValue(500, "The uid cannot empty", null);
+        }*/
         picture.setUid(jsonObject.getString("uid"));
-        if (StringUtils.isBlank(jsonObject.getString("userUid"))){
-            return new RespValue(500,"The userUid cannot empty",null);
-        }
+        /*if (StringUtils.isBlank(jsonObject.getString("userUid"))) {
+            return new RespValue(500, "The userUid cannot empty", null);
+        }*/
         picture.setUserUid(jsonObject.getString("userUid"));
-        picture.setRemark("通过安检");
+        picture.setRemark(jsonObject.getString("remark"));
         // 修改图片状态
         picture.setFlag(0);
         int i = pictureService.passCheck(picture);
-        if (i!=0){
-            return new RespValue(200,"success",null);
+
+        // 查询该站点是否还有未判图的图片
+        try {
+            selectPictureByStationUid(jsonObject.getString("stationUid"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-            return new RespValue(500,"Failed to modify information ",null);
+
+        // TODO 将通过结果发送给设备
+
+
+       /* if (i != 0) {
+            return new RespValue(200, "success", null);
+        }
+        return new RespValue(500, "Failed to modify information ", null);*/
 
     }
 
+    @PostMapping("/packetInfo.do")
+    public RespValue packetInfo(@RequestParam(value = "file", required = false) MultipartFile[] files,String uid){
+
+
+        return null;
+    }
 
 
 }
