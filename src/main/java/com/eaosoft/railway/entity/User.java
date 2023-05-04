@@ -1,5 +1,8 @@
 package com.eaosoft.railway.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.annotation.write.style.ColumnWidth;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -33,33 +36,42 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "uid")
+
     private String uid;
 
     @ApiModelProperty("工号")
+
     private String serialNo;
 
     @ApiModelProperty("用户名")
     private String username;
 
     @ApiModelProperty("身份")
+
     private Integer caption;
 
     @ApiModelProperty("密码")
+
     private String password;
 
     @ApiModelProperty("性别（0-女，1-男）")
+
     private Integer gender;
 
     @ApiModelProperty("年龄")
+
     private Integer age;
 
     @ApiModelProperty("手机号")
+
     private String phone;
 
     @ApiModelProperty("住址")
+
     private String address;
 
     @ApiModelProperty("状态")
+
     private Integer state;
 
     @ApiModelProperty("真实姓名")

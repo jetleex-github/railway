@@ -16,4 +16,5 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface PictureMapper extends BaseMapper<Picture> {
 
+    Picture selectOneByStationUid(String stationUid);
 }

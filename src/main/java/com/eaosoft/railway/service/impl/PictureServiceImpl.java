@@ -54,4 +54,16 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
         int i = pictureMapper.updateById(picture);
         return i;
     }
+
+    @Override
+    public Picture selectOneByStationUid(String stationUid) {
+        Picture picture = pictureMapper.selectOneByStationUid(stationUid);
+        return picture;
+    }
+
+    @Override
+    public int passCheck(Picture picture) {
+        int i = pictureMapper.updateById(picture);
+        return i;
+    }
 }

@@ -22,4 +22,8 @@ public interface IPictureService extends IService<Picture> {
     List<Picture> selectPictureByStationUid(String stationUid);
 
     int addResult(Picture picture);
+
+    Picture selectOneByStationUid(String stationUid);
+
+    int passCheck(Picture picture);
 }
