@@ -56,9 +56,12 @@ public class ShiroConfig {
         map.put("/railway/login/**","anon");
         map.put("/**.html", "anon");
         map.put("/base/**","anon");
+        map.put("/railway/login/login.do","anon");
         map.put("/railway/picture/drawingJudgment.do","anon");
+        map.put("/railway/user/exportModel.do","anon");
+        map.put("/railway/alarmManage/alarmInfoExport.do","anon");
         map.put("/sse/**","anon");
-        //map.put("/sse/**","anon");
+        map.put("/testPublish/**","anon");
        // map.put("/railway/sse/**","anon");
         map.put("/**", "authc");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(map);

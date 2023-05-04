@@ -3,9 +3,12 @@ package com.eaosoft.railway.service;
 import com.alibaba.fastjson.JSONObject;
 import com.eaosoft.railway.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,7 +53,7 @@ public interface IUserService extends IService<User> {
 
 
 
-    User findSerialNo(String serialNo);
+    int findSerialNo(String serialNo);
 
     User findByIdCard(String idCard);
 
@@ -62,6 +65,16 @@ public interface IUserService extends IService<User> {
 
     // 根据userUid，查询其所在站点uid
     String findStationUidByUserUid(String uid);
+
+    List<User> exportModel(String uid);
+
+    void importUser(MultipartFile file, IUserService userService);
+
+    List<UserVo> exportUser();
+
+    int changeIdentity(User user);
+
+
 
     /* void addUnreadNotice(String uid, String s);*/
 }

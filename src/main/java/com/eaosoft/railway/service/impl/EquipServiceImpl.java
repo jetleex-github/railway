@@ -37,6 +37,7 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("station_exit_uid",stationExitUid);
         wrapper.eq("code",1);
+        wrapper.eq("repair",1);
         List list = equipMapper.selectList(wrapper);
         return list;
     }
@@ -72,6 +73,7 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
             wrapper.eq("equip_name",equipName);
         }
         wrapper.eq("code",0);
+        wrapper.eq("repair",1);
         List list = equipMapper.selectList(wrapper);
         PageInfo<Equip> pageInfo = new PageInfo<>(list);
         return pageInfo;
@@ -95,5 +97,11 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
         wrapper.eq("serial_no",serialNo);
         Equip equip = equipMapper.selectOne(wrapper);
         return equip;
+    }
+
+    @Override
+    public int equipRepair(String serialNo) {
+        int i = equipMapper.equipRepair(serialNo);
+        return i;
     }
 }

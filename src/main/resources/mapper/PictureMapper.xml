@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eaosoft.railway.mapper.PictureMapper">
 
+
     <select id="selectOneByStationUid" resultType="com.eaosoft.railway.entity.Picture">
         select * from rw_picture  where station_uid = #{stationUid} and flag = 0 ORDER BY  create_time LIMIT 1
     </select>

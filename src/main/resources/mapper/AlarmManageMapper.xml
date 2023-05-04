@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eaosoft.railway.mapper.AlarmManageMapper">
 
+    <select id="alarmInfoExport" resultType="com.eaosoft.railway.vo.AlarmVo">
+        select am.*,s.station_name,se.station_exit from rw_alarm_manage am
+            join rw_station s on am.station_uid = s.uid
+            left join rw_station_exit se on am.station_exit_uid = se.uid
+        where am.station_uid = #{stationUid}
+    </select>
 </mapper>

@@ -2,7 +2,10 @@ package com.eaosoft.railway.service;
 
 import com.eaosoft.railway.entity.AlarmManage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eaosoft.railway.vo.AlarmVo;
 import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 /**
  * <p>
@@ -21,4 +24,8 @@ public interface IAlarmManageService extends IService<AlarmManage> {
     PageInfo<AlarmManage> selectAlarm(Integer currentPage, Integer pageSize,String equipName);
 
     PageInfo<AlarmManage> selectAlarmByState(Integer currentPage, Integer pageSize);
+
+    int dealAlarm(AlarmManage alarmManage);
+
+    List<AlarmVo> alarmInfoExport(String stationUid);
 }

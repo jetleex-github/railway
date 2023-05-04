@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 
+
 @Component
 public class UploadUtils {
 
@@ -30,32 +31,32 @@ public class UploadUtils {
      * @throws Exception
      */
     public static String upload(MultipartFile multipartFile) throws Exception {
+        // 获取当前系统的分隔符 \ 或者是 /
         String SEPARATOR = File.separator;
 
         // 文件夹名称
-        String path ="";
+        String path = "";
         // 获取文件名称和字节流
         InputStream stream = multipartFile.getInputStream();
         // 获取文件名称和后缀
         String name = multipartFile.getOriginalFilename();
-        System.out.println("name===>"+name);
+        System.out.println("name===>" + name);
         String substring = name.substring(0, 7);
-        if (substring.equals("aiofile")){
+        if (substring.equals("aiofile")) {
             // 根据文件名获得文件夹的名称
-            path = name.substring(0,7) +SEPARATOR
-                    + name.substring(7,11) +SEPARATOR
-                    + name.substring(11,13) +SEPARATOR
-                    +name.substring(13,15) + SEPARATOR
-                    +name.substring(15,17) +SEPARATOR;
+            path = name.substring(0, 7) + SEPARATOR
+                    + name.substring(7, 11) + SEPARATOR
+                    + name.substring(11, 13) + SEPARATOR
+                    + name.substring(13, 15) + SEPARATOR
+                    + name.substring(15, 17);
 
 
             // 重新设置文件名称，避免重名被覆盖，新的文件名为当前时间的毫秒数+文件名后缀
             name = System.currentTimeMillis() + name.substring(name.lastIndexOf("."));
 
             String replace = path.replace(SEPARATOR, "");
-            name = replace +name;
-        }
-        else{
+            name = replace + name;
+        } else {
             // 重新设置文件名称，避免重名被覆盖，新的文件名为当前时间的毫秒数+文件名后缀
             name = System.currentTimeMillis() + name.substring(name.lastIndexOf("."));
             // 根据当前系统时间设置文件存放的路径和名称
@@ -64,49 +65,47 @@ public class UploadUtils {
             // 将小于10的月份设置为 0X
             int a = calendar.get(Calendar.MONTH) + 1;
             String month = "";
-            if (a<10){
-                month = "0"+a;
-            }else {
+            if (a < 10) {
+                month = "0" + a;
+            } else {
                 month = String.valueOf(a);
             }
 
             String hour = "";
             int x = calendar.get(Calendar.HOUR_OF_DAY);
-            if (x<10){
+            if (x < 10) {
                 hour = "0" + x;
-            }else {
+            } else {
                 hour = String.valueOf(x);
             }
-            path = "aiofile"+SEPARATOR
+            path = "aiofile" + SEPARATOR
                     + calendar.get(Calendar.YEAR) + SEPARATOR
                     + month + SEPARATOR
-                    + calendar.get(Calendar.DATE)+ SEPARATOR
+                    + calendar.get(Calendar.DATE) + SEPARATOR
                     + hour;
 
             String replace = path.replace(SEPARATOR, "");
-            name = replace +name;
+            name = replace + name;
         }
         //获取文件夹路径
-        File file = new File(fileSavePath + SEPARATOR +path);
+        File file = new File(fileSavePath + SEPARATOR + path);
         //如果文件夹不存在则创建
         if (!file.exists() && !file.isDirectory()) {
             file.mkdirs();
         }
 
-
         // 将文件保存到服务器上指定的路径
-        String savePath = file + SEPARATOR +name;
-        System.out.println("savePath===>"+savePath);
+        String savePath = file + SEPARATOR + name;
+        System.out.println("savePath===>" + savePath);
         FileOutputStream out = new FileOutputStream(savePath);
         byte[] buffer = new byte[1024];
         // 用于获取流的长度
-        int bytesRead=0;
+        int bytesRead = 0;
         while ((bytesRead = stream.read(buffer)) != -1) {
             out.write(buffer, 0, bytesRead);
         }
         out.close();
         // 返回相对路径地址
-        return  name;
+        return name;
     }
-
 }

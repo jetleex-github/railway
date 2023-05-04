@@ -19,4 +19,6 @@ import java.util.List;
 @Mapper
 public interface EquipMapper extends BaseMapper<Equip> {
     List<String> selectEquipName(@Param("routeName")String routeName);
+
+    int equipRepair(@Param("serialNo")String serialNo);
 }

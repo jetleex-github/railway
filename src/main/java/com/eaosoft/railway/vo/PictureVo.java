@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PictureVo {
-
     private String uid;
-
     private String stationUid;
     private Object rightPicture;
     private Object leftPicture;
