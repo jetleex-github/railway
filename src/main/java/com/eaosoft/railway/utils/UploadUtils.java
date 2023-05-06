@@ -78,10 +78,17 @@ public class UploadUtils {
             } else {
                 hour = String.valueOf(x);
             }
+            String day = "";
+            int d = calendar.get(Calendar.DATE);
+            if (d < 10){
+                day = "0" + d;
+            }else {
+                day = String.valueOf(d);
+            }
             path = "aiofile" + SEPARATOR
                     + calendar.get(Calendar.YEAR) + SEPARATOR
                     + month + SEPARATOR
-                    + calendar.get(Calendar.DATE) + SEPARATOR
+                    + day + SEPARATOR
                     + hour;
 
             String replace = path.replace(SEPARATOR, "");

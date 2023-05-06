@@ -33,6 +33,7 @@ public class MyRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         //1.根据token获取账号
+        String s = authenticationToken.getPrincipal().toString();
         String username = authenticationToken.getPrincipal().toString();
         //2.根据账号查询用户信息
         User user = userService.selectByUsername(username);

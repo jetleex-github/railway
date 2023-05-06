@@ -461,9 +461,12 @@ public class PictureController {
         // 将stationUid作为key放入map中，设置连接缓存
         sseCache.put(stationUid, sseEmitter);
         try {
+            wait(1000);
             // 根据stationUid查询该站点需要进行判断的信息
             selectPictureByStationUid(stationUid);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -483,6 +486,20 @@ public class PictureController {
         return "over";
     }
 
+    /**
+     * 断开SSE连接
+     * @param stationUid
+     * @return
+     */
+    @PostMapping("/loginOut.do")
+    public RespValue loginOut(String stationUid){
+        SseEmitter remove = sseCache.remove(stationUid);
+        if (remove != null){
+            return new RespValue(200,"success",null);
+        }
+        return new RespValue(500,"error",null);
+    }
+
 
     /**
      * 通过安检
@@ -490,7 +507,7 @@ public class PictureController {
      * @return
      */
     @PostMapping("/passCheck.do")
-    public void passCheck(@RequestBody ReqValue reqValue) {
+    public RespValue passCheck(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Picture picture = new Picture();
@@ -507,28 +524,15 @@ public class PictureController {
         picture.setFlag(0);
         int i = pictureService.passCheck(picture);
 
-        // 查询该站点是否还有未判图的图片
-        try {
-            selectPictureByStationUid(jsonObject.getString("stationUid"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         // TODO 将通过结果发送给设备
 
 
-       /* if (i != 0) {
+        if (i != 0) {
             return new RespValue(200, "success", null);
         }
-        return new RespValue(500, "Failed to modify information ", null);*/
+        return new RespValue(500, "Failed to modify information ", null);
 
-    }
-
-    @PostMapping("/packetInfo.do")
-    public RespValue packetInfo(@RequestParam(value = "file", required = false) MultipartFile[] files,String uid){
-
-
-        return null;
     }
 
 

@@ -5,8 +5,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.eaosoft.railway.entity.LoginLog;
+import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.ILoginLogService;
+import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MD5Utils;
 import com.eaosoft.railway.utils.MemberExcelListener;
@@ -52,6 +54,9 @@ public class UserController {
     @Autowired
     private ILoginLogService loginLogService;
 
+    @Autowired
+    private IStationService stationService;
+
 
     public String getUserSerial() {
         Boolean a = true;
@@ -70,7 +75,7 @@ public class UserController {
     }
 
     /**
-     * addUser
+     * 添加用户
      *
      * @param reqValue
      * @return
@@ -118,9 +123,16 @@ public class UserController {
 
                 if (jsonObject.getString("station") == ""
                         || jsonObject.getString("station") == null) {
-                    return new RespValue(500, "The station  cannot be empty", null);
+                    return new RespValue(500, "The station name cannot be empty", null);
                 }
-                user1.setStation(jsonObject.getString("station"));
+
+                // 判断该站点名称是否存在
+                Station station = stationService.findStation(jsonObject.getString("station"));
+                if (station == null){
+                    return new RespValue(500,"The station name does not exist!",null);
+                }
+                user1.setStationUid(station.getUid());
+
                 // 添加员工职位
                 if (jsonObject.getString("position") == null || jsonObject.getString("position") == "") {
                     return new RespValue(500, "The position cannot be empty", null);
@@ -249,8 +261,6 @@ public class UserController {
         loginLog.setCreateTime(LocalDateTime.now());
         loginLog.setIpAddr(user1.getAddress());
         loginLog.setPath("/logout.do");*/
-
-
         // 在redis中删除该信息
         redisTemplate.delete(token);
         return new RespValue(200, "success", null);
@@ -276,7 +286,14 @@ public class UserController {
         user1.setPhone(jsonObject.getString("phone"));
         user1.setAddress(jsonObject.getString("address"));
         user1.setUpdateTime(LocalDateTime.now());
-        user1.setStation(jsonObject.getString("station"));
+
+        // 查询该站点是否存在
+        Station station = stationService.findStation(jsonObject.getString("station"));
+        if (station == null){
+            return new RespValue(500,"The station name does not exist!",null);
+        }
+        user1.setStationUid(station.getUid());
+
         int i = userService.modifyUserInfo(user1);
         if (i != 0) {
             return new RespValue(200, "success", user1);
@@ -456,7 +473,7 @@ public class UserController {
         User user = new User();
         user.setUid(jsonObject.getString("userUid"));
         user.setCaption(0);
-        user.setStation("");
+        user.setStationUid("");
         int i = userService.changeIdentity(user);
         if (i != 0) {
             return new RespValue(200,"success",null);
