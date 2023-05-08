@@ -29,7 +29,6 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
 
 
     // 由于 MemberExcelListener 不能交给Spring管理 所以我们只能手动传入 userService
-
     public IUserService userService;
 
     public MemberExcelListener(){
@@ -58,7 +57,8 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
             user.setCreateTime(LocalDateTime.now());
             user.setUpdateTime(LocalDateTime.now());
             user.setRouteName(users.getRouteName());
-            user.setStation(users.getStation());
+
+           // user.setStation(users.getStation());
             user.setCaption(1);
             String userSerial = getUserSerial(userService);
             user.setSerialNo(userSerial);

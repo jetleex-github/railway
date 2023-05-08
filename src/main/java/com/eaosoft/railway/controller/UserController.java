@@ -52,10 +52,10 @@ public class UserController {
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    private IStationService stationService;
+    private ILoginLogService loginLogService;
 
     @Autowired
-    private ILoginLogService loginLogService;
+    private IStationService stationService;
 
 
     public String getUserSerial() {
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     /**
-     * addUser
+     * 添加用户
      *
      * @param reqValue
      * @return
@@ -123,14 +123,16 @@ public class UserController {
 
                 if (jsonObject.getString("station") == ""
                         || jsonObject.getString("station") == null) {
-                    return new RespValue(500, "The station  cannot be empty", null);
+                    return new RespValue(500, "The station name cannot be empty", null);
                 }
+
                 // 判断该站点名称是否存在
                 Station station = stationService.findStation(jsonObject.getString("station"));
                 if (station == null){
                     return new RespValue(500,"The station name does not exist!",null);
                 }
                 user1.setStationUid(station.getUid());
+
                 // 添加员工职位
                 if (jsonObject.getString("position") == null || jsonObject.getString("position") == "") {
                     return new RespValue(500, "The position cannot be empty", null);
@@ -259,8 +261,6 @@ public class UserController {
         loginLog.setCreateTime(LocalDateTime.now());
         loginLog.setIpAddr(user1.getAddress());
         loginLog.setPath("/logout.do");*/
-
-
         // 在redis中删除该信息
         redisTemplate.delete(token);
         return new RespValue(200, "success", null);
@@ -287,7 +287,7 @@ public class UserController {
         user1.setAddress(jsonObject.getString("address"));
         user1.setUpdateTime(LocalDateTime.now());
 
-        // 判断该站点名称是否存在
+        // 查询该站点是否存在
         Station station = stationService.findStation(jsonObject.getString("station"));
         if (station == null){
             return new RespValue(500,"The station name does not exist!",null);

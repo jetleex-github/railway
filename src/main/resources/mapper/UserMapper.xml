@@ -8,7 +8,10 @@
     </delete>
 
     <select id="selectByUsernameAndPassword" resultType="com.eaosoft.railway.entity.User">
-        select * from rw_user where username=#{username} and password=#{password}
+        select u.*,s.uid station_uid from rw_user u
+            join rw_station s
+            ON u.station = s.station_name
+        where username=#{username} and password=#{password}
     </select>
     <select id="selectByUsername" resultType="com.eaosoft.railway.entity.User">
         select * from rw_user where username=#{username}
@@ -26,11 +29,6 @@
     <select id="selectUserNum" resultType="java.lang.Integer">
         select count(*)  from rw_user
     </select>
-    <!--<select id="findStationUidByUserUid" resultType="java.lang.String">
-        select s.uid from rw_station s
-            join rw_user u on s.station_name = u.station
-                     where u.uid = #{userUid} and u.is_deleted = 1
-    </select>-->
     <select id="findStationUidByUserUid" resultType="java.lang.String">
         select station_uid from rw_user where uid = #{userUid}
     </select>

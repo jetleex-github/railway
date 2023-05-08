@@ -3,6 +3,7 @@ package com.eaosoft.railway.entity;
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -116,7 +117,7 @@ public class User implements Serializable {
     @ExcelIgnore
     private LocalDateTime updateTime;
 
-    @ApiModelProperty("所属站点Uid")
+    @ApiModelProperty("所属站点uid")
     @ColumnWidth(10)
     @ExcelProperty("所属站点")
     private String stationUid;
@@ -134,6 +135,8 @@ public class User implements Serializable {
     @TableLogic(value = "1",delval = "0")
     @ExcelIgnore
     private Integer isDeleted;
+
+
 
     /*public String getUid() {
         return uid;

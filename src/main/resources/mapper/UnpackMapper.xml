@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eaosoft.railway.mapper.UnpackMapper">
+
+    <select id="findUnpackInfo" resultType="com.eaosoft.railway.entity.Unpack">
+        SELECT DISTINCT	u.task_uid,u.username,u.card_id,s.create_time FROM rw_unpack u
+        JOIN (
+            SELECT  pb.uid,pb.create_time  FROM rw_picture pb
+            JOIN ( SELECT uid, station_name FROM rw_station ) sa
+            <where>
+                 AND station_uid = sa.uid
+                <if test="stationName != null and stationName != ''">
+                    AND station_name like '%${stationName}%'
+                </if>
+                <if test="createTime != '' and createTime != null">
+                    AND create_time >= #{createTime}
+                </if>
+
+            </where>
+        ) s ON s.uid = u.task_uid
+
+    </select>
+</mapper>
