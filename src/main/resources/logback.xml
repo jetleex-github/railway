@@ -25,7 +25,7 @@
         info: 信息
         error:错误级别 项目上线
     -->
-    <root level="info">
+    <root level="error">
         <appender-ref ref="Console"/>
         <appender-ref ref="File"/>
     </root>

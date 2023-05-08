@@ -116,10 +116,10 @@ public class User implements Serializable {
     @ExcelIgnore
     private LocalDateTime updateTime;
 
-    @ApiModelProperty("所属站点")
+    @ApiModelProperty("所属站点Uid")
     @ColumnWidth(10)
     @ExcelProperty("所属站点")
-    private String station;
+    private String stationUid;
 
     @ApiModelProperty("线路名称")
     @ColumnWidth(10)

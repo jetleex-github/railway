@@ -109,6 +109,7 @@ public class PictureController {
         picture.setCreateTime(LocalDateTime.now());
         pictureService.insertPictures(picture);
 
+        // 通知前端有新的照片传入
         try {
             selectPictureByStationUid(stationUid);
         } catch (IOException e) {
@@ -163,9 +164,9 @@ public class PictureController {
         int i = pictureService.addResult(picture);
 
         // 获取站点uid
-        String stationUid = picture.getStationUid();
+       /*  String stationUid = picture.getStationUid();
         // 查询该站点下是否还存在需要判断的图片
-        try {
+       try {
             selectPictureByStationUid(stationUid);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -173,7 +174,7 @@ public class PictureController {
 
         if (i != 0) {
             return new RespValue(200, "success", null);
-        }
+        }*/
         return null;
     }
 
@@ -249,7 +250,7 @@ public class PictureController {
             }
         }
         //将查询到的数据发送给前端
-        push(stationUid, pictureVo);
+        push(stationUid,pictureVo);
 
         // List<PictureVo> imageData = new ArrayList<>();
 
@@ -456,11 +457,13 @@ public class PictureController {
 
 
         // 根据userUid 查找stationUid
+        System.out.println("userUid====>"+userUid);
         String stationUid = userService.findStationUidByUserUid(userUid);
 
         // 将stationUid作为key放入map中，设置连接缓存
         sseCache.put(stationUid, sseEmitter);
         try {
+            System.out.println("stationUid===>"+stationUid);
             // 根据stationUid查询该站点需要进行判断的信息
             selectPictureByStationUid(stationUid);
         } catch (IOException e) {
@@ -490,7 +493,9 @@ public class PictureController {
      * @return
      */
     @PostMapping("/passCheck.do")
-    public void passCheck(@RequestBody ReqValue reqValue) {
+    public RespValue passCheck(@RequestBody ReqValue reqValue) {
+
+
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Picture picture = new Picture();
@@ -504,31 +509,41 @@ public class PictureController {
         picture.setUserUid(jsonObject.getString("userUid"));
         picture.setRemark(jsonObject.getString("remark"));
         // 修改图片状态
-        picture.setFlag(0);
+        picture.setFlag(1);
         int i = pictureService.passCheck(picture);
 
-        // 查询该站点是否还有未判图的图片
+     /*   // 查询该站点是否还有未判图的图片
         try {
             selectPictureByStationUid(jsonObject.getString("stationUid"));
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
 
         // TODO 将通过结果发送给设备
 
 
-       /* if (i != 0) {
+        if (i != 0) {
             return new RespValue(200, "success", null);
         }
-        return new RespValue(500, "Failed to modify information ", null);*/
+        return new RespValue(500, "Failed to modify information ", null);
 
     }
 
-    @PostMapping("/packetInfo.do")
-    public RespValue packetInfo(@RequestParam(value = "file", required = false) MultipartFile[] files,String uid){
-
-
-        return null;
+    /**
+     * 断开SSE连接
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/loginOut.do")
+    public RespValue loginOut(@RequestBody ReqValue reqValue){
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        SseEmitter remove = sseCache.remove(jsonObject.getString("stationUid"));
+        if (remove != null){
+            System.out.println("断开成功");
+            return new RespValue(200,"success",null);
+        }
+        return new RespValue(500,"error",null);
     }
 
 
