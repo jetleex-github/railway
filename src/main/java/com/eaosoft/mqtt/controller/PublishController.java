@@ -1,10 +1,10 @@
 package com.eaosoft.mqtt.controller;
- 
+
 import com.eaosoft.mqtt.MQTTServer;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
- 
+
 import javax.annotation.Resource;
  
 @RestController

@@ -1,11 +1,9 @@
 package com.eaosoft.railway.mapper;
 
-import com.eaosoft.railway.entity.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Param;
+import com.eaosoft.railway.entity.Role;
+import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 /**
  * <p>
@@ -15,6 +13,6 @@ import java.util.List;
  * @author zzs
  * @since 2023-03-16
  */
-@Repository
+@Mapper
 public interface RoleMapper extends BaseMapper<Role> {
 }

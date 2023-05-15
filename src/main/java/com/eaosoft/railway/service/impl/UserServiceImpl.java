@@ -1,32 +1,22 @@
 package com.eaosoft.railway.service.impl;
 
 import com.alibaba.excel.EasyExcel;
-import com.alibaba.fastjson.JSONObject;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.eaosoft.railway.entity.AuthToken;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.mapper.UserMapper;
-import com.eaosoft.railway.service.AuthTokenService;
 import com.eaosoft.railway.service.IUserService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.eaosoft.railway.utils.MD5Utils;
 import com.eaosoft.railway.utils.MemberExcelListener;
+import com.eaosoft.railway.utils.TokenUtil;
 import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -45,8 +35,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private UserMapper userMapper;
 
-    @Autowired
-    private AuthTokenService authTokenService;
+  //  @Autowired
+   // private AuthTokenService authTokenService;
 
     private static long tokenExpiration = 365 * 24 * 60 * 60 * 1000;
     private static String tokenSignKey = "123456";
@@ -108,39 +98,39 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param user
      * @return
      */
-    @Override
-    public String getToken(User user) {
-       /* Date start = new Date();
-        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
-        Date end = new Date(currentTime);
-        String token = "";
-        // JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secret)).build();
-        Algorithm algorithm = Algorithm.HMAC256(user.getPassword());
-        token = JWT.create()
-                .withAudience(String.valueOf(user.getUsername()))
-                .withIssuedAt(start).withExpiresAt(end)
-                .sign(algorithm);*/
-        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
-        String token = Jwts.builder()
-                //分类
-                .setSubject("AUTH-USER")
-
-                //设置token有效时长
-                .setExpiration(new Date(currentTime))
-
-                //设置主体部分
-                .claim("username", user.getUsername())
-                .claim("password", user.getPassword())
-
-                //签名部分
-                .signWith(SignatureAlgorithm.HS512, tokenSignKey)
-                .compressWith(CompressionCodecs.GZIP)
-                .compact();
-        authTokenService.deleteToken(token);
-        //save
-        authTokenService.setToken(token,currentTime);
-        return token;
-    }
+//    @Override
+//    public String getToken(User user) {
+//       /* Date start = new Date();
+//        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
+//        Date end = new Date(currentTime);
+//        String token = "";
+//        // JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(secret)).build();
+//        Algorithm algorithm = Algorithm.HMAC256(user.getPassword());
+//        token = JWT.create()
+//                .withAudience(String.valueOf(user.getUsername()))
+//                .withIssuedAt(start).withExpiresAt(end)
+//                .sign(algorithm);*/
+//        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
+//        String token = Jwts.builder()
+//                //分类
+//                .setSubject("AUTH-USER")
+//
+//                //设置token有效时长
+//                .setExpiration(new Date(currentTime))
+//
+//                //设置主体部分
+//                .claim("username", user.getUsername())
+//                .claim("password", user.getPassword())
+//
+//                //签名部分
+//                .signWith(SignatureAlgorithm.HS512, tokenSignKey)
+//                .compressWith(CompressionCodecs.GZIP)
+//                .compact();
+//        authTokenService.deleteToken(token);
+//        //save
+//        authTokenService.setToken(token,currentTime);
+//        return token;
+//    }
 
     /**
      * 退出登录
@@ -181,27 +171,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @param user
      * @return
      */
-    @Override
-    public String createToken(User user) {
-        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
-        String token = Jwts.builder()
-                //分类
-                .setSubject("AUTH-USER")
-
-                //设置token有效时长
-                .setExpiration(new Date(System.currentTimeMillis() + tokenExpiration))
-
-                //设置主体部分
-                .claim("username", user.getUsername())
-                .claim("password", user.getPassword())
-
-                //签名部分
-                .signWith(SignatureAlgorithm.HS512, tokenSignKey)
-                .compressWith(CompressionCodecs.GZIP)
-                .compact();
-
-        return token;
-    }
+//    @Override
+//    public String createToken(User user) {
+//        long currentTime = System.currentTimeMillis() + (60*8)* 60 * 1000;
+//        String token = Jwts.builder()
+//                //分类
+//                .setSubject("AUTH-USER")
+//
+//                //设置token有效时长
+//                .setExpiration(new Date(System.currentTimeMillis() + tokenExpiration))
+//
+//                //设置主体部分
+//                .claim("username", user.getUsername())
+//                .claim("password", user.getPassword())
+//
+//                //签名部分
+//                .signWith(SignatureAlgorithm.HS512, tokenSignKey)
+//                .compressWith(CompressionCodecs.GZIP)
+//                .compact();
+//
+//        return token;
+//    }
 
     /**
      * 根据token获取用户名
@@ -210,19 +200,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public String findUserInfoByToken(String token) {
-        try {
-            if (StringUtils.isEmpty(token))
-                return "";
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token);
-            Claims claims = claimsJws.getBody();
-            // 查询token有效期
-            /*Date expiration = claims.getExpiration();
-            System.out.println("expiration===>"+expiration);*/
-            return (String) claims.get("username");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+//        try {
+//            if (StringUtils.isEmpty(token))
+//                return "";
+//            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(tokenSignKey).parseClaimsJws(token);
+//            Claims claims = claimsJws.getBody();
+//            // 查询token有效期
+//            /*Date expiration = claims.getExpiration();
+//            System.out.println("expiration===>"+expiration);*/
+//            return (String) claims.get("username");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+        if (StringUtils.isEmpty(token))
+            return "";
+        String username = TokenUtil.getUsername(token);
+        return username;
     }
 
     /**
@@ -295,19 +289,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     @Override
-    public User findByIdCard(String idCard) {
+    public  List<User> findByIdCard(String idCard) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("id_card",idCard);
-        User user = userMapper.selectOne(wrapper);
-        return user;
+        List<User> list = userMapper.selectList(wrapper);
+        return list;
     }
 
     @Override
-    public User findByEmail(String email) {
+    public List<User>  findByEmail(String email) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("email",email);
-        User user = userMapper.selectOne(wrapper);
-        return user;
+       // List<User>  user = userMapper.selectOne(wrapper);
+        List<User> list = userMapper.selectList(wrapper);
+        return list;
     }
 
     @Override

@@ -2,8 +2,6 @@ package com.eaosoft.railway.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.eaosoft.railway.entity.Station;
-import com.eaosoft.railway.entity.StationExit;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

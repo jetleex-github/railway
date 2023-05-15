@@ -1,14 +1,11 @@
 package com.eaosoft.railway.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.eaosoft.railway.entity.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +27,7 @@ public interface IUserService extends IService<User> {
 
     int addUser(User user);
 
-    String getToken(User user);
+  //  String getToken(User user);
 
     int deleteToken(String token);
 
@@ -39,7 +36,7 @@ public interface IUserService extends IService<User> {
     int modifyPassword(User user);
 
 
-    String createToken(User user);
+  //  String createToken(User user);
 
     String findUserInfoByToken(String token);
 
@@ -55,9 +52,9 @@ public interface IUserService extends IService<User> {
 
     int findSerialNo(String serialNo);
 
-    User findByIdCard(String idCard);
+    List<User> findByIdCard(String idCard);
 
-    User findByEmail(String email);
+    List<User>  findByEmail(String email);
 
     int findUserNum();
 

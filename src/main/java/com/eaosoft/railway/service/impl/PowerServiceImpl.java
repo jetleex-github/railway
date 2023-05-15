@@ -1,9 +1,9 @@
 package com.eaosoft.railway.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.Power;
 import com.eaosoft.railway.mapper.PowerMapper;
 import com.eaosoft.railway.service.IPowerService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**

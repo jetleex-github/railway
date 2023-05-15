@@ -9,17 +9,21 @@ import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
 import com.eaosoft.railway.utils.UploadUtils;
-import java.io.*;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.servlet.http.HttpServletRequest;
 import com.eaosoft.railway.vo.PictureVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 
@@ -109,14 +113,27 @@ public class PictureController {
         picture.setCreateTime(LocalDateTime.now());
         pictureService.insertPictures(picture);
 
-        try {
-            selectPictureByStationUid(stationUid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         // 通过照片地址查询该条信息的uid，并返回
         Picture p = pictureService.selectUidByUrl(frontUrl);
+
+
+
+        // 判断是否有链接没有处于判图状态
+        if (sseCache.size()>0){
+            for (String s : sseCache.keySet()) {
+                // 获取 + 的位置
+                int i = s.lastIndexOf("+");
+                if (i != -1){
+                    String userUid = s.substring(0, i);
+                    try {
+                        selectPicture(userUid);
+                        return new RespValue(200, "success", p.getUid());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
         return new RespValue(200, "success", p.getUid());
     }
 
@@ -162,14 +179,6 @@ public class PictureController {
         picture.setFlag(1);
         int i = pictureService.addResult(picture);
 
-        // 获取站点uid
-        String stationUid = picture.getStationUid();
-        // 查询该站点下是否还存在需要判断的图片
-        try {
-            selectPictureByStationUid(stationUid);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
         if (i != 0) {
             return new RespValue(200, "success", null);
@@ -205,12 +214,12 @@ public class PictureController {
     }*/
 
     /**
-     * 查询该站点等待时间最长的需要判图的图片
+     * 查询等待时间最长的需要判图的图片
      *
      * @param
      * @return
      */
-    public void selectPictureByStationUid(String stationUid) throws IOException {
+    public void selectPicture(String userUid) throws IOException {
 
 
        /* Object requestDatas = reqValue.getRequestDatas();
@@ -218,8 +227,9 @@ public class PictureController {
         String stationUid = jsonObject.getString("stationUid");*/
         // List<Picture> pictureList = pictureService.selectPictureByStationUid(stationUid);
 
-        // 查询出最先需要判图的照片信息
-        Picture picture = pictureService.selectOneByStationUid(stationUid);
+        // 查询出需要判图的照片信息
+        Picture picture = pictureService.selectPicture();
+
 
         PictureVo pictureVo = new PictureVo();
         if (picture != null) {
@@ -229,107 +239,27 @@ public class PictureController {
             pictureVo.setStationUid(picture.getStationUid());
 
             if (!StringUtils.isBlank(picture.getLeftPicture())) {
-
                 // 通过文件名获取文件地址，并将文件转换成base64的字符流
                 String leftPicture = getLocalImage(picture.getLeftPicture());
-
                 pictureVo.setLeftPicture(leftPicture);
             }
             if (!StringUtils.isBlank(picture.getFrontPicture())) {
-                //picture.setFrontPicture(fileSavePath + SEPARATOR + picture.getFrontPicture());
-
                 String frontPicture = getLocalImage(picture.getFrontPicture());
                 pictureVo.setFrontPicture(frontPicture);
             }
             if (!StringUtils.isBlank(picture.getRightPicture())) {
-                //picture.setRightPicture(fileSavePath + SEPARATOR + picture.getRightPicture());
-
                 String rightPicture = getLocalImage(picture.getRightPicture());
                 pictureVo.setRightPicture(rightPicture);
             }
+
+
+            //将查询到的数据发送给前端
+            push(userUid, pictureVo);
+
+            // 修改该条记录状态，避免被多人重复查找
+            picture.setFlag(1);
+            pictureService.updateById(picture);
         }
-        //将查询到的数据发送给前端
-        push(stationUid, pictureVo);
-
-        // List<PictureVo> imageData = new ArrayList<>();
-
-        //PictureVo pictureVo = new PictureVo();
-
-        // 拼接上文件的根目录地址
-//        for (Picture picture : pictureList) {
-//            pictureVo.setUid(picture.getUid());
-//            if (!StringUtils.isBlank(picture.getLeftPicture())) {
-//                picture.setLeftPicture(fileSavePath + SEPARATOR + picture.getLeftPicture());
-//                // System.out.println("picture.getLeftPicture()===>"+picture.getLeftPicture());
-//                /*BufferedImage img = UploadUtils.getImg(fileSavePath + SEPARATOR + picture.getLeftPicture());
-//                ;*/
-//                /*byte[] bytes = UploadUtils.getPic(Paths.get(picture.getLeftPicture()));
-//
-//                MultipartFile file = new MockMultipartFile("__init__.py","__init__.py","application/octet-stream" ,bytes); //
-//                MultipartFile multipartFiles = {file}; //此处因为我方法需要转成数组，没看到有构造器方法，故采用这种方式*/
-//                File file = new File(picture.getLeftPicture());
-//                //JSONObject leftPicture = getLocalImage("leftPicture", String.valueOf(file));
-//                String leftPicture = getLocalImage(String.valueOf(file));
-//                // imageData.add(leftPicture);
-//                pictureVo.setLeftPicture(leftPicture);
-//                //imageData.add(getImageBytes(String.valueOf(file)));
-//                // System.out.println("leftPictureFile====>"+file);
-//              /*  InputStream inputStream = new FileInputStream(file);
-//                //借助的工具同样引入spring-mock包，pom文件在上边有
-//                MultipartFile multipartFile = new MockMultipartFile("leftPicture", inputStream);
-//*/
-//
-//
-//            }
-//            if (!StringUtils.isBlank(picture.getFrontPicture())) {
-//                picture.setFrontPicture(fileSavePath + SEPARATOR + picture.getFrontPicture());
-//
-//                //  System.out.println("picture.getLeftPicture()===>"+picture.getFrontPicture());
-//                // BufferedImage img = UploadUtils.getImg(fileSavePath + SEPARATOR + picture.getFrontPicture());
-//                //map.put("leftPicture",img);
-//                File file = new File(picture.getFrontPicture());
-//                //JSONObject frontPicture = getLocalImage("frontPicture", String.valueOf(file));
-//                String frontPicture = getLocalImage(String.valueOf(file));
-//                //imageData.add(frontPicture);
-//                pictureVo.setFrontPicture(frontPicture);
-//                //imageData.add(getImageBytes(String.valueOf(file)));
-//               /* InputStream inputStream = new FileInputStream(file);
-//                //借助的工具同样引入spring-mock包，pom文件在上边有
-//                MultipartFile multipartFile = new MockMultipartFile("frontPicture", inputStream);
-//*/
-//
-//            }
-//            if (!StringUtils.isBlank(picture.getRightPicture())) {
-//                picture.setRightPicture(fileSavePath + SEPARATOR + picture.getRightPicture());
-//                File file = new File(picture.getRightPicture());
-//                // JSONObject rightPicture = getLocalImage("rightPicture", String.valueOf(file));
-//                String rightPicture = getLocalImage(String.valueOf(file));
-//                //imageData.add(rightPicture);
-//                pictureVo.setRightPicture(rightPicture);
-//               /* InputStream inputStream = new FileInputStream(file);
-//                //借助的工具同样引入spring-mock包，pom文件在上边有
-//                MultipartFile multipartFile = new MockMultipartFile("rightPicture", inputStream);*/
-//
-//
-//                // imageData.add(getImageBytes(String.valueOf(file)));
-//
-//                // System.out.println("picture.getLeftPicture()===>"+picture.getRightPicture());
-//                /*BufferedImage img = UploadUtils.getImg(fileSavePath + SEPARATOR + picture.getRightPicture());
-//                map.put("leftPicture",img);*/
-//            }
-//
-//        }
-
-        //将查询到的数据发送给前端
-        // push(stationUid,pictureList);
-      /*  List<String> base64Images = imageData.stream()
-                .map(Base64.getEncoder()::encodeToString)
-                .collect(Collectors.toList());
-
-        System.out.println("base64Images====>"+base64Images);*/
-        // imageData.add(pictureVo);
-        // push(stationUid, pictureVo);
-        // return new RespValue(200, "success", pictureList);
     }
 
     /**
@@ -380,7 +310,6 @@ public class PictureController {
      * @return
      */
     public String getLocalImage(String imagePath) throws IOException {
-        //  String imagePath = "C:/images/image.jpg";
 
         // 拼接获取文件所在路径
         String path = fileSavePath + SEPARATOR
@@ -403,41 +332,12 @@ public class PictureController {
         in.read(imageBytes);
         in.close();
 
-        // byte[] imageBytes = new byte[(int) imageFile.length()];
         // 添加base64字节头，拼接成base64的完整格式
-        String base64Image = "data:image/" + substring + " ;base64," + Base64.getEncoder().encodeToString(imageBytes);
+        String base64Image = "data:image/" + substring+ " ;base64," + Base64.getEncoder().encodeToString(imageBytes);
         return base64Image;
-        /*JSONObject response = new JSONObject();
-        response.put("image", base64Image);
-        return response;*/
-        /*HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response.toString(), headers, HttpStatus.OK);*/
+
 
     }
-
-  /*  public JSONObject getLocalImage(String fileName,String imagePath) throws IOException {
-      //  String imagePath = "C:/images/image.jpg";
-        // 获取图片
-        File imageFile = new File(imagePath);
-        // 获取文件名
-        String name = imageFile.getName();
-        // 获取文件后缀名
-        String substring = name.substring(name.lastIndexOf("."));
-        FileInputStream in = new FileInputStream(imageFile);
-        byte[] imageBytes = new byte[(int) imageFile.length()];
-        in.read(imageBytes);
-        in.close();
-        // 添加base64字节头，拼接成base64的完整格式
-        String base64Image ="data:image/"+substring+" ;base64," + Base64.getEncoder().encodeToString(imageBytes);
-
-        JSONObject response = new JSONObject();
-        response.put(fileName, base64Image);
-       HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(response.toString(), headers, HttpStatus.OK);
-        return response;
-    }*/
 
 
 
@@ -456,30 +356,37 @@ public class PictureController {
 
 
         // 根据userUid 查找stationUid
-        String stationUid = userService.findStationUidByUserUid(userUid);
+        //String stationUid = userService.findStationUidByUserUid(userUid);
 
+        String s = userUid+"+1";
+        System.out.println("s===><"+s);
         // 将stationUid作为key放入map中，设置连接缓存
-        sseCache.put(stationUid, sseEmitter);
+//        Map map = new HashMap();
+//        map.put(userUid,0);
+//        sseCache.putAll(map);
+        sseCache.put(userUid, sseEmitter);
+        sseCache.put(s,sseEmitter);
+
         try {
-            wait(1000);
-            // 根据stationUid查询该站点需要进行判断的信息
-            selectPictureByStationUid(stationUid);
+            // 查询未判断的图片
+            selectPicture(userUid);
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        sseEmitter.onTimeout(() -> sseCache.remove(stationUid));
+        sseEmitter.onTimeout(() -> sseCache.remove(userUid));
         sseEmitter.onCompletion(() -> System.out.println("完成！！！"));
         return sseEmitter;
     }
 
 
     // 将查询到的信息发送给前端
-    public String push(String stationUid, PictureVo pictureVo) throws IOException {
+    public String push(String userUid, PictureVo pictureVo) throws IOException {
 
-        SseEmitter sseEmitter = sseCache.get(stationUid);
+        SseEmitter sseEmitter = sseCache.get(userUid);
+        String user = userUid+"+1";
+        System.out.println("user==<>"+user);
+        sseCache.remove(user);
         if (sseEmitter != null) {
             sseEmitter.send(pictureVo);
         }
@@ -488,13 +395,17 @@ public class PictureController {
 
     /**
      * 断开SSE连接
-     * @param stationUid
+     * @param reqValue
      * @return
      */
     @PostMapping("/loginOut.do")
-    public RespValue loginOut(String stationUid){
-        SseEmitter remove = sseCache.remove(stationUid);
+    public RespValue loginOut(@RequestBody ReqValue reqValue){
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        System.out.println("userUid===>"+jsonObject.getString("userUid"));
+        SseEmitter remove = sseCache.remove(jsonObject.getString("userUid"));
         if (remove != null){
+
             return new RespValue(200,"success",null);
         }
         return new RespValue(500,"error",null);
@@ -521,7 +432,7 @@ public class PictureController {
         picture.setUserUid(jsonObject.getString("userUid"));
         picture.setRemark(jsonObject.getString("remark"));
         // 修改图片状态
-        picture.setFlag(0);
+        picture.setFlag(1);
         int i = pictureService.passCheck(picture);
 
 

@@ -1,7 +1,7 @@
 package com.eaosoft.railway.mapper;
 
-import com.eaosoft.railway.entity.Station;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.vo.StationVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2023-03-24
  */
 
-@Repository
+
 @Mapper
 public interface StationMapper extends BaseMapper<Station> {
 

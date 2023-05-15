@@ -1,7 +1,7 @@
 package com.eaosoft.railway.service;
 
-import com.eaosoft.railway.entity.Equip;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eaosoft.railway.entity.Equip;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;

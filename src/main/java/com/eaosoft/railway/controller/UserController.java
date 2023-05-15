@@ -4,34 +4,32 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.eaosoft.railway.entity.LoginLog;
+
 import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.ILoginLogService;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MD5Utils;
-import com.eaosoft.railway.utils.MemberExcelListener;
+
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
-import com.eaosoft.railway.vo.AlarmVo;
+
+import com.eaosoft.railway.utils.TokenUtil;
 import com.eaosoft.railway.vo.UserVo;
 import com.github.pagehelper.PageInfo;
-
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.LocalDateTime;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -52,12 +50,13 @@ public class UserController {
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    private ILoginLogService loginLogService;
-
-    @Autowired
     private IStationService stationService;
 
 
+    /**
+     * 随机生成用户编号
+     * @return
+     */
     public String getUserSerial() {
         Boolean a = true;
         String substring = "";
@@ -82,25 +81,25 @@ public class UserController {
      */
     @RequestMapping("/addUser.do")
     public RespValue addUser(@RequestBody ReqValue reqValue) {
+        User user1 = new User();
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         // 判断用户名是否为空
         String username = jsonObject.getString("username");
+
         if (StringUtils.isBlank(jsonObject.getString("username"))) {
-            return new RespValue(500, "The username cannot be empty", null);
+            return new RespValue(500, "The username cannot empty", null);
+        }else {
+            // 用户名不为空，判断用户名是否存在
+            User user = userService.selectByUsername(username);
+            if (user != null) {
+                return new RespValue(500, "The username already exists", null);
+            }
+            user1.setUsername(username);
         }
-
-        // 判断用户名是否存在
-        User user = userService.selectByUsername(username);
-        if (user != null) {
-            return new RespValue(500, "The username already exists", null);
-        }
-
-        User user1 = new User();
-        user1.setUsername(jsonObject.getString("username"));
 
         // 判断密码是否为空
-        if (StringUtils.isBlank(jsonObject.getString("password"))) {
+        if (StringUtils.isBlank(jsonObject.getString("password"))){
             return new RespValue(500, "The password cannot be empty", null);
         }
         // Encrypt the password with MD5
@@ -138,7 +137,6 @@ public class UserController {
                     return new RespValue(500, "The position cannot be empty", null);
                 }
                 user1.setPosition(jsonObject.getString("position"));
-
 
                 //根据当前时间，设置用户编号
                 Boolean a = true;
@@ -187,8 +185,9 @@ public class UserController {
         if (!StringUtils.isBlank(jsonObject.getString("idCard"))) {
 
             // 判断身份证号是否重复
-            User user2 = userService.findByIdCard(jsonObject.getString("idCard"));
-            if (user2 != null) {
+            List<User> user2 = userService.findByIdCard(jsonObject.getString("idCard"));
+            System.out.println("user2========>"+user2);
+            if (user2.size() != 0) {
                 return new RespValue(500, "The idCard already exist", null);
             }
             user1.setIdCard(jsonObject.getString("idCard"));
@@ -196,8 +195,8 @@ public class UserController {
 
         // 判断邮箱是否存在
         if (!StringUtils.isBlank(jsonObject.getString("email"))) {
-            User u = userService.findByEmail(jsonObject.getString("email"));
-            if (u != null) {
+            List<User> u = userService.findByEmail(jsonObject.getString("email"));
+            if (u.size() != 0) {
                 return new RespValue(500, "The email already exist", null);
             }
             user1.setEmail(jsonObject.getString("email"));
@@ -279,6 +278,15 @@ public class UserController {
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         User user1 = new User();
         user1.setUid(jsonObject.getString("uid"));
+        // 判断用户名是否为空
+        if (StringUtils.isBlank(jsonObject.getString("username"))){
+            return new RespValue(500,"The username cannot empty!",null);
+        }
+        // 判断用户名是否存在
+        User user = userService.selectByUsername(jsonObject.getString("username"));
+        if (user != null){
+            return new RespValue(500,"The username already exist",null);
+        }
         user1.setUsername(jsonObject.getString("username"));
         user1.setCaption(jsonObject.getInteger("caption"));
         user1.setGender(jsonObject.getInteger("gender"));
@@ -351,14 +359,17 @@ public class UserController {
     /**
      * 根据token获取用户信息
      *
-     * @param reqValue
+     * @param
      * @return
      */
     @PostMapping("/findUserInfoByToken.do")
-    public RespValue findUserInfoByToken(@RequestBody ReqValue reqValue, HttpServletRequest request) {
-        String token = reqValue.getToken();
+    public RespValue findUserInfoByToken( HttpServletRequest request) {
+        String token = request.getHeader("token");
+        //String token = ((HttpServletRequest) request).getHeader("token");
         // 根据用户token在redis中获取用户信息
-        String s = redisTemplate.opsForValue().get(token);
+        String username = TokenUtil.getUsername(token);
+        // 根据用户token在redis中获取用户信息
+        String s = redisTemplate.opsForValue().get(username);
         Map map = JSON.parseObject(s, Map.class);
         JSONObject user = (JSONObject) map.get("user");
 
@@ -370,6 +381,23 @@ public class UserController {
         return new RespValue(500, "Token invalid ", null);
     }
 
+//    public RespValue findUserInfoByToken(HttpServletRequest request) {
+//        //String token = reqValue.getToken();
+//        String token = request.getHeader("token");
+//        //String token = ((HttpServletRequest) request).getHeader("token");
+//        // 根据用户token在redis中获取用户信息
+//        String username = TokenUtil.getUsername(token);
+//        String s = redisTemplate.opsForValue().get(username);
+//        Map map = JSON.parseObject(s, Map.class);
+//        JSONObject user = (JSONObject) map.get("user");
+//
+//        // 通过用户名获取用户信息
+//        User user1 = userService.selectByUsername((String) user.get("username"));
+//        if (user1 != null) {
+//            return new RespValue(200, "success", user1);
+//        }
+//        return new RespValue(500, "Token invalid ", null);
+//    }
 
     /**
      * 员工离职

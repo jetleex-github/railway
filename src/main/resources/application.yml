@@ -1,12 +1,35 @@
-anon:
-  url:
-    - /railway/login/login.do
-
+server:
+  port: 8080
+#spring:
+#  thymeleaf:
+#    mode: HTML
 spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    #url: jdbc:mysql://localhost:3306/blog?useSSL=false&characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/railway?serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+
+  redis:
+    host: localhost
+    port: 6379
+    jedis:
+      pool:
+        max-active: -1
+        max-wait: 3000ms
+    timeout: 3000ms
+
   mvc:
   servlet:
     multipart:
-      max-file-size: 10MB  		# Set the maximum size of a single file to 10MB
-      max-request-size: 100MB  	# Set multiple file sizes to 100MB
+      max-file-size: 10MB        # Set the maximum size of a single file to 10MB
+      max-request-size: 100MB    # Set multiple file sizes to 100MB
+
+logging:
+  level:
+    root: info
+    com.eaosoft: info
+  file: log/imcoding.log
 
 

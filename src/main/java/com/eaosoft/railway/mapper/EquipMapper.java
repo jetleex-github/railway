@@ -1,7 +1,7 @@
 package com.eaosoft.railway.mapper;
 
-import com.eaosoft.railway.entity.Equip;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.eaosoft.railway.entity.Equip;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

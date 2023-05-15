@@ -1,13 +1,14 @@
 package com.eaosoft.railway.utils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.*;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Calendar;
 
 
 @Component
@@ -40,8 +41,11 @@ public class UploadUtils {
         InputStream stream = multipartFile.getInputStream();
         // 获取文件名称和后缀
         String name = multipartFile.getOriginalFilename();
-        System.out.println("name===>" + name);
+        if (StringUtils.isBlank(name)){
+            return "";
+        }
         String substring = name.substring(0, 7);
+
         if (substring.equals("aiofile")) {
             // 根据文件名获得文件夹的名称
             path = name.substring(0, 7) + SEPARATOR

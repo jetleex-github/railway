@@ -8,16 +8,12 @@ import com.eaosoft.railway.entity.AlarmManage;
 import com.eaosoft.railway.entity.Equip;
 import com.eaosoft.railway.service.IAlarmManageService;
 import com.eaosoft.railway.service.IEquipService;
-import com.eaosoft.railway.utils.MemberExcelListener;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
 import com.eaosoft.railway.vo.AlarmVo;
-import com.eaosoft.railway.vo.DownExcel;
-import com.eaosoft.railway.vo.PictureVo;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

@@ -1,10 +1,10 @@
 package com.eaosoft.railway.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.Picture;
 import com.eaosoft.railway.mapper.PictureMapper;
 import com.eaosoft.railway.service.IPictureService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,8 +57,8 @@ public class PictureServiceImpl extends ServiceImpl<PictureMapper, Picture> impl
     }
 
     @Override
-    public Picture selectOneByStationUid(String stationUid) {
-        Picture picture = pictureMapper.selectOneByStationUid(stationUid);
+    public Picture selectPicture() {
+        Picture picture = pictureMapper.selectPicture();
         return picture;
     }
 

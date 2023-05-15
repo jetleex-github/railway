@@ -1,12 +1,12 @@
 package com.eaosoft.railway.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.Notice;
 import com.eaosoft.railway.entity.UnreadNotice;
 import com.eaosoft.railway.mapper.UnreadNoticeMapper;
 import com.eaosoft.railway.mapper.UserMapper;
 import com.eaosoft.railway.service.IUnreadNoticeService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

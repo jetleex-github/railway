@@ -1,8 +1,8 @@
 package com.eaosoft.railway.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.eaosoft.railway.entity.Notice;
 import com.eaosoft.railway.entity.UnreadNotice;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

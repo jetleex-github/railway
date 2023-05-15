@@ -1,7 +1,7 @@
 package com.eaosoft.railway.service;
 
-import com.eaosoft.railway.entity.Picture;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.eaosoft.railway.entity.Picture;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public interface IPictureService extends IService<Picture> {
 
     int addResult(Picture picture);
 
-    Picture selectOneByStationUid(String stationUid);
+    Picture selectPicture();
 
     int passCheck(Picture picture);
 

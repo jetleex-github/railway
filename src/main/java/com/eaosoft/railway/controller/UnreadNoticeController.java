@@ -1,20 +1,18 @@
 package com.eaosoft.railway.controller;
 
 import com.eaosoft.railway.entity.Notice;
-import com.eaosoft.railway.entity.UnreadNotice;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IUnreadNoticeService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -41,6 +39,9 @@ public class UnreadNoticeController {
         String token = reqValue.getToken();
         //根据token获取用户名
         String username = userService.findUserInfoByToken(token);
+        if (StringUtils.isEmpty(username)){
+            return new RespValue(500,"Please log in again ",null);
+        }
         // 通过用户名获取用户信息
         User user = userService.selectByUsername(username);
 
