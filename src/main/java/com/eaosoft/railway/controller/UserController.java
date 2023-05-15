@@ -239,28 +239,15 @@ public class UserController {
     /**
      * logout 退出
      *
-     * @param reqValue
+     * @param request
      * @return
      */
     @PostMapping("/logout.do")
-    public RespValue logout(@RequestBody ReqValue reqValue) {
-        String token = reqValue.getToken();
-        /*// 根据用户token在redis中获取用户信息
-        String s = redisTemplate.opsForValue().get(token);
-        Map map = JSON.parseObject(s, Map.class);
-        JSONObject user = (JSONObject) map.get("user");
-
-        // 通过用户名获取用户信息
-        User user1 = userService.selectByUsername((String) user.get("username"));
-
-        // 设置退出登录信息到
-        LoginLog loginLog = new LoginLog();
-        loginLog.setUsername(user1.getUsername());
-        loginLog.setCallerName(reqValue.getCallerName());
-        loginLog.setCreateTime(LocalDateTime.now());
-        loginLog.setIpAddr(user1.getAddress());
-        loginLog.setPath("/logout.do");*/
+    public RespValue logout(HttpServletRequest request) {
+        String token = request.getHeader("token");
+        String username = TokenUtil.getUsername(token);
         // 在redis中删除该信息
+        redisTemplate.delete(username);
         redisTemplate.delete(token);
         return new RespValue(200, "success", null);
     }
