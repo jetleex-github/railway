@@ -30,19 +30,17 @@ public class TokenUtil {
      * @date         : 2020-1-31 22:49
      */
     public static String sign(String username,String password,Long currentTime){
-
         String token=null;
         try {
             Date expireAt=new Date(currentTime+EXPIRE_TIME);
             token = JWT.create()
                     .withIssuer("auth0")//发行人
                     .withClaim("username",username)//存放数据
-                    .withClaim("password",password)
+                    .withClaim("uid",password)
                     .withClaim("currentTime",currentTime)
                     .withExpiresAt(expireAt)//过期时间
                     .sign(Algorithm.HMAC256(TOKEN_SECRET));
         } catch (IllegalArgumentException|JWTCreationException je) {
-
         }
         return token;
     }

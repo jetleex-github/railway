@@ -35,12 +35,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Autowired
     private UserMapper userMapper;
 
-  //  @Autowired
-   // private AuthTokenService authTokenService;
-
-    private static long tokenExpiration = 365 * 24 * 60 * 60 * 1000;
-    private static String tokenSignKey = "123456";
-
     /**
      *
      * @param username

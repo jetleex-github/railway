@@ -14,10 +14,10 @@
 <!--        where username=#{username} and password=#{password}-->
 <!--    </select>-->
     <select id="selectByUsernameAndPassword" resultType="com.eaosoft.railway.entity.User">
-        select * from rw_user where username=#{username} and password=#{password}
+        select * from rw_user where username=#{username} and password=#{password} and is_deleted = 1
     </select>
     <select id="selectByUsername" resultType="com.eaosoft.railway.entity.User">
-        select * from rw_user where username=#{username}
+        select * from rw_user where username=#{username} and is_deleted = 1
     </select>
     <select id="selectAll" resultType="com.eaosoft.railway.entity.User">
 

@@ -2,9 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.eaosoft.railway.mapper.EquipMapper">
     <update id="equipRepair">
-        update rw_equip set repair = 0 where serial_no = #{serialNo}
+        update rw_equip set repair = 0 where serial_no = #{serialNo} and is_deleted = 0
     </update>
     <select id="selectEquipName" resultType="java.lang.String">
-        select distinct equip_name from rw_equip where route_name = #{routeName}
+        select distinct equip_name from rw_equip where route_name = #{routeName} and is_deleted = 0
+    </select>
+    <select id="equipLogin" resultType="com.eaosoft.railway.entity.Equip">
+        select * from rw_equip where serial_no = #{serialNo} and is_deleted = 0 and `code` = 1
     </select>
 </mapper>

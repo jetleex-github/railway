@@ -32,4 +32,8 @@ public interface IEquipService extends IService<Equip> {
     Equip findEquipBySerialNo(String serialNo);
 
     int equipRepair(String serialNo);
+
+    int equipDel(String serialNo);
+
+    Equip equipLogin(String username);
 }

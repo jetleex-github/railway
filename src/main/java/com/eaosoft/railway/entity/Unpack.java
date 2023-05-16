@@ -1,5 +1,6 @@
 package com.eaosoft.railway.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -29,6 +30,7 @@ public class Unpack implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @TableId(value = "uid")
     private String uid;
 
     private String serialNo;

@@ -1,6 +1,8 @@
 package com.eaosoft.railway.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -74,6 +76,10 @@ public class Equip implements Serializable {
     private Integer state;
     @ApiModelProperty("是否绑定（0-未绑定，1-已绑定）")
     private Integer code;
+
+    @ApiModelProperty("状态（0-可用，1-不可用）")
+    @TableLogic(value = "0",delval = "1")
+    private Integer isDeleted;
 
 
 }

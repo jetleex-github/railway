@@ -107,7 +107,7 @@ public class UploadUtils {
 
         // 将文件保存到服务器上指定的路径
         String savePath = file + SEPARATOR + name;
-        System.out.println("savePath===>" + savePath);
+       // System.out.println("savePath===>" + savePath);
         FileOutputStream out = new FileOutputStream(savePath);
         byte[] buffer = new byte[1024];
         // 用于获取流的长度

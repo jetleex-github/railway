@@ -211,5 +211,23 @@ public class EquipController {
         return new RespValue(500, "error", null);
     }
 
+    /**
+     * 删除设备
+     *
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/equipDel.do")
+    public RespValue equipDel(@RequestBody ReqValue reqValue) {
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        String serialNo = jsonObject.getString("serialNo");
+        int i = equipService.equipDel(serialNo);
+        if (i != 0) {
+            return new RespValue(200, "success", null);
+        }
+        return new RespValue(500, "error", null);
+    }
+
 
 }

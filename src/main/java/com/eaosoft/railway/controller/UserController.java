@@ -368,23 +368,6 @@ public class UserController {
         return new RespValue(500, "Token invalid ", null);
     }
 
-//    public RespValue findUserInfoByToken(HttpServletRequest request) {
-//        //String token = reqValue.getToken();
-//        String token = request.getHeader("token");
-//        //String token = ((HttpServletRequest) request).getHeader("token");
-//        // 根据用户token在redis中获取用户信息
-//        String username = TokenUtil.getUsername(token);
-//        String s = redisTemplate.opsForValue().get(username);
-//        Map map = JSON.parseObject(s, Map.class);
-//        JSONObject user = (JSONObject) map.get("user");
-//
-//        // 通过用户名获取用户信息
-//        User user1 = userService.selectByUsername((String) user.get("username"));
-//        if (user1 != null) {
-//            return new RespValue(200, "success", user1);
-//        }
-//        return new RespValue(500, "Token invalid ", null);
-//    }
 
     /**
      * 员工离职

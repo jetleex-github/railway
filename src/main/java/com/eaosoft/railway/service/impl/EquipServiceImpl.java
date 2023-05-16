@@ -104,4 +104,18 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
         int i = equipMapper.equipRepair(serialNo);
         return i;
     }
+
+    @Override
+    public int equipDel(String serialNo) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("serial_no",serialNo);
+        int i = equipMapper.delete(wrapper);
+        return i;
+    }
+
+    @Override
+    public Equip equipLogin(String username) {
+        Equip equip = equipMapper.equipLogin(username);
+        return equip;
+    }
 }
