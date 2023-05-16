@@ -4724,3 +4724,11 @@ com.auth0.jwt.exceptions.JWTDecodeException: The token was expected to have 3 pa
 2023-05-16 17:23:40.592 DEBUG 22772 --- [http-nio-8080-exec-1] c.e.r.m.UserMapper.selectByUsername      : ==> Parameters: user(String)
 2023-05-16 17:23:40.594 DEBUG 22772 --- [http-nio-8080-exec-1] c.e.r.m.UserMapper.selectByUsername      : <==      Total: 1
 2023-05-16 17:23:40.600 DEBUG 22772 --- [http-nio-8080-exec-1] c.e.r.m.UserMapper.selectByUsername      : ==>  Preparing: select * from rw_user where username=? and is_deleted = 1 
+2023-05-16 17:23:40.600 DEBUG 22772 --- [http-nio-8080-exec-1] c.e.r.m.UserMapper.selectByUsername      : ==> Parameters: user(String)
+2023-05-16 17:23:40.601 DEBUG 22772 --- [http-nio-8080-exec-1] c.e.r.m.UserMapper.selectByUsername      : <==      Total: 1
+2023-05-16 17:23:41.730 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : ==>  Preparing: select * from rw_user where username=? and is_deleted = 1 
+2023-05-16 17:23:41.730 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : ==> Parameters: user(String)
+2023-05-16 17:23:41.732 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : <==      Total: 1
+2023-05-16 17:23:41.737 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : ==>  Preparing: select * from rw_user where username=? and is_deleted = 1 
+2023-05-16 17:23:41.738 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : ==> Parameters: user(String)
+2023-05-16 17:23:41.739 DEBUG 22772 --- [http-nio-8080-exec-4] c.e.r.m.UserMapper.selectByUsername      : <==      Total: 1
