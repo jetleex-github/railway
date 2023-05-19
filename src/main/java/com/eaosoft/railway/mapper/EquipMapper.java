@@ -23,4 +23,9 @@ public interface EquipMapper extends BaseMapper<Equip> {
     int equipRepair(@Param("serialNo")String serialNo);
 
     Equip equipLogin(@Param("serialNo")String username);
+
+    List<Equip> selectEquipByCondition( @Param("stationUid") String stationUid,
+                                        @Param("equipName") String equipName,
+                                        @Param("serialNo") String serialNo,
+                                        @Param("state") Integer state);
 }

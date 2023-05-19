@@ -4,5 +4,14 @@
 
     <select id="selectLoginLog" resultType="com.eaosoft.railway.entity.LoginLog">
         select * from rw_login_log
+        <where>
+            <if test="state != null || state != ''">
+                and state like '%${state}%'
+            </if>
+            <if test="username != null || username != ''">
+                and username like '%${username}%'
+            </if>
+
+        </where>
     </select>
 </mapper>

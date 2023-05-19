@@ -3,6 +3,7 @@ package com.eaosoft.railway.config;
 import com.eaosoft.railway.entity.JWTToken;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IUserService;
+import com.eaosoft.railway.utils.RedisUtil;
 import com.eaosoft.railway.utils.TokenUtil;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -26,6 +27,9 @@ import java.util.Set;
  */
 @Component
 public class CustomRealm extends AuthorizingRealm {
+
+    @Autowired
+    RedisUtil redisUtil;
 
     @Autowired
     private IUserService userService;
@@ -71,17 +75,24 @@ public class CustomRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
- //       System.out.println("身份认证");
+       //System.out.println("身份认证");
         String token= (String) authenticationToken.getCredentials();
         String username= TokenUtil.getUsername(token);
-
-        //2.根据账号查询用户信息
-        User user = userService.selectByUsername(username);
-        if (user != null) {
-            //从数据库中获取的密码
+        //根据账号查询用户信息
+        // 判断redis中是否存在，存在则认证通过
+        boolean b = redisUtil.hasKey(username);
+        if (b){
             SimpleAuthenticationInfo info =new SimpleAuthenticationInfo(token,token,"MyRealm");
             return info;
         }
+
+        // 在数据库中查询是否存在该用户
+//        User user = userService.selectByUsername(username);
+//        if (user != null) {
+//            //从数据库中获取的密码
+//            SimpleAuthenticationInfo info =new SimpleAuthenticationInfo(token,token,"MyRealm");
+//            return info;
+//        }
         return null;
     }
 }

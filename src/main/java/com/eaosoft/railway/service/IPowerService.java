@@ -1,7 +1,7 @@
 package com.eaosoft.railway.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.eaosoft.railway.entity.Power;
+import com.eaosoft.railway.entity.Permissions;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.eaosoft.railway.entity.Power;
  * @author zzs
  * @since 2023-03-16
  */
-public interface IPowerService extends IService<Power> {
+public interface IPowerService extends IService<Permissions> {
 
 }

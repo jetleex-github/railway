@@ -39,7 +39,9 @@ public class LoginLogController {
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
-        PageInfo<LoginLog> pageInfo = loginLogService.selectLoginLog(currentPage,pageSize);
+        String state = jsonObject.getString("state");
+        String username = jsonObject.getString("username");
+        PageInfo<LoginLog> pageInfo = loginLogService.selectLoginLog(currentPage,pageSize,state,username);
         return new RespValue(200,"success",pageInfo);
     }
 

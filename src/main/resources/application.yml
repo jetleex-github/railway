@@ -5,7 +5,7 @@ server:
 #    mode: HTML
 spring:
   datasource:
-   # driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/railway?serverTimezone=Asia/Shanghai
     username: root
     password: 123456

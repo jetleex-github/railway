@@ -14,9 +14,9 @@ import java.io.Serializable;
  * @author zzs
  * @since 2023-03-16
  */
-@TableName("rw_power")
-@ApiModel(value = "Power对象", description = "")
-public class Power implements Serializable {
+@TableName("rw_permissions")
+@ApiModel(value = "Permissions对象", description = "")
+public class Permissions implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

@@ -75,7 +75,7 @@ public class LoginController {
             RedisUtil.set(username, JSON.toJSON(map), 12 * 60 * 60);
 
             // 登录成功设置登陆状态
-            loginLog.setState("登录成功");
+            loginLog.setState("成功");
             // 将登录日志添加到数据库
             loginLogService.insertLoginLog(loginLog);
 
@@ -89,7 +89,7 @@ public class LoginController {
             return new RespValue(200, "success", respVo);
         }
 
-        loginLog.setState("登录失败");
+        loginLog.setState("失败");
         // 将登录日志添加到数据库
         loginLogService.insertLoginLog(loginLog);
 
@@ -136,9 +136,9 @@ public class LoginController {
 
 
             // 登录成功设置登陆状态
-            loginLog.setState("登录成功");
+            loginLog.setState("成功");
             // 将登录日志添加到数据库
-            loginLogService.insertLoginLog(loginLog);
+           // loginLogService.insertLoginLog(loginLog);
 
 
             response.setHeader("Authorization", token);

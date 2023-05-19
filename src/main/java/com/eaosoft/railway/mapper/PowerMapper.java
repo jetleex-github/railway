@@ -1,9 +1,8 @@
 package com.eaosoft.railway.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.eaosoft.railway.entity.Power;
+import com.eaosoft.railway.entity.Permissions;
 import org.apache.ibatis.annotations.Mapper;
-import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -14,6 +13,6 @@ import org.springframework.stereotype.Repository;
  * @since 2023-03-16
  */
 @Mapper
-public interface PowerMapper extends BaseMapper<Power> {
+public interface PowerMapper extends BaseMapper<Permissions> {
 
 }

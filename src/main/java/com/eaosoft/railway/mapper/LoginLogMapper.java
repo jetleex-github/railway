@@ -3,6 +3,7 @@ package com.eaosoft.railway.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.eaosoft.railway.entity.LoginLog;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface LoginLogMapper extends BaseMapper<LoginLog> {
 
-    List<LoginLog> selectLoginLog();
+    List<LoginLog> selectLoginLog(@Param("state") String state,@Param("username") String username);
 }

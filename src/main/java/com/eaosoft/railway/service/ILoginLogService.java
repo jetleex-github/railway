@@ -16,5 +16,5 @@ public interface ILoginLogService extends IService<LoginLog> {
 
     void insertLoginLog(LoginLog loginLog);
 
-    PageInfo<LoginLog> selectLoginLog(Integer currentPage, Integer pageSize);
+    PageInfo<LoginLog> selectLoginLog(Integer currentPage, Integer pageSize,String state,String username);
 }

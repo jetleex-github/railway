@@ -5,6 +5,7 @@ import com.eaosoft.railway.entity.Unpack;
 import com.eaosoft.railway.mapper.UnpackMapper;
 import com.eaosoft.railway.service.IUnpackService;
 import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +32,10 @@ public class UnpackServiceImpl extends ServiceImpl<UnpackMapper, Unpack> impleme
     }
 
     @Override
-    public List<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName,String createTime) {
+    public PageInfo<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName, String createTime) {
         PageHelper.startPage(currentPage,pageSize);
         List<Unpack> list = unpackMapper.findUnpackInfo(stationName,createTime);
-        return list;
+        PageInfo pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 }

@@ -57,8 +57,8 @@ public class User implements Serializable {
     private String password;
 
     @ApiModelProperty("真实姓名")
-    @ColumnWidth(10)
-    @ExcelProperty("真实姓名")
+    @ColumnWidth(20)
+    @ExcelProperty("姓名")
     private String realName;
 
 
@@ -117,11 +117,11 @@ public class User implements Serializable {
 
     @ApiModelProperty("所属站点uid")
     @ColumnWidth(10)
-    @ExcelProperty("所属站点")
+    @ExcelProperty("所属站点uid")
     private String stationUid;
 
     @ApiModelProperty("线路名称")
-    @ColumnWidth(10)
+    @ColumnWidth(20)
     @ExcelProperty("线路名称")
     private String routeName;
 

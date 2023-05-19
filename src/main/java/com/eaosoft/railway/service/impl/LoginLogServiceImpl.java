@@ -42,9 +42,9 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog> i
      * @return
      */
     @Override
-    public PageInfo<LoginLog> selectLoginLog(Integer currentPage, Integer pageSize) {
+    public PageInfo<LoginLog> selectLoginLog(Integer currentPage, Integer pageSize,String state,String username) {
         PageHelper.startPage(currentPage,pageSize);
-        List<LoginLog> list = loginLogMapper.selectLoginLog();
+        List<LoginLog> list = loginLogMapper.selectLoginLog(state,username);
         PageInfo<LoginLog> pageInfo = new PageInfo<>(list);
         return pageInfo;
     }

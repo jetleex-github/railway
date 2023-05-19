@@ -36,4 +36,8 @@ public interface IEquipService extends IService<Equip> {
     int equipDel(String serialNo);
 
     Equip equipLogin(String username);
+
+    int updateEquip(Equip equip);
+
+    PageInfo<Equip> selectEquipByCondition(Equip equip, Integer pageSize, Integer currentPage);
 }

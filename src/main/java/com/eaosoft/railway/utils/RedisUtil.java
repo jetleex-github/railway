@@ -2,7 +2,7 @@ package com.eaosoft.railway.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.eaosoft.railway.entity.User;
-import org.hibernate.boot.jaxb.SourceType;
+//import org.hibernate.boot.jaxb.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;

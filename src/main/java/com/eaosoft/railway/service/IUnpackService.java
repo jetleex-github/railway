@@ -2,6 +2,7 @@ package com.eaosoft.railway.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.eaosoft.railway.entity.Unpack;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface IUnpackService extends IService<Unpack> {
 
     int addUnpackInfo(Unpack unpack);
 
-    List<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName,String createTime);
+    PageInfo<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName, String createTime);
 }

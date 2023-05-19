@@ -43,8 +43,11 @@ public class MyShiroConfig {
         filterRuleMap.put("/js/**","anon");
         filterRuleMap.put("/lib/**","anon");
         filterRuleMap.put("/railway/login/login.do","anon");
+        filterRuleMap.put("/railway/login//equipLogin.do","anon");
+
         filterRuleMap.put("/railway/picture/drawingJudgment.do","anon");
-        filterRuleMap.put("/railway/picture/loginOut.do","anon");
+
+        filterRuleMap.put("/railway/user/exportModel.do","anon");
         //拦截所有接口
         filterRuleMap.put("/**","jwt");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterRuleMap);

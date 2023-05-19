@@ -408,7 +408,7 @@ public class UserController {
 
 
     /**
-     * 批量导入用户模板导出
+     * 批量导入用户信息模板导出
      *
      * @param response
      */
@@ -417,7 +417,7 @@ public class UserController {
         List<User> user = userService.exportModel("1638081879957639170");
         System.out.println("userVo===>" + user);
         // 获取消息头
-        response.setHeader("content-disposition", "attachment;filename=alarmInfoExport_" + System.currentTimeMillis() + ".xlsx");
+        response.setHeader("content-disposition", "attachment;filename=userModel_" + System.currentTimeMillis() + ".xlsx");
         // 生成excel并导出
         try {
             EasyExcel.write(response.getOutputStream(), User.class).sheet("用户导入模板").doWrite(user);

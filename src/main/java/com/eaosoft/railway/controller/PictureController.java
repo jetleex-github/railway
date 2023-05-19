@@ -3,6 +3,7 @@ package com.eaosoft.railway.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.eaosoft.mqtt.MQTTServer;
 import com.eaosoft.railway.entity.Picture;
 import com.eaosoft.railway.service.IPictureService;
 import com.eaosoft.railway.service.IUserService;
@@ -62,6 +63,8 @@ public class PictureController {
     @Autowired
     private IPictureService pictureService;
 
+
+
     /**
      * 添加需要判图的图片
      *
@@ -71,7 +74,7 @@ public class PictureController {
      * @param stationUid 站点uid
      */
     @PostMapping("/insertPictures.do")
-    public RespValue insertPictures01(
+    public RespValue insertPictures(
             @RequestParam(value = "rightFile", required = false) MultipartFile rightFile,
             @RequestParam(value = "leftFile", required = false) MultipartFile leftFile,
             @RequestParam(value = "frontFile", required = false) MultipartFile frontFile,
@@ -115,8 +118,6 @@ public class PictureController {
 
         // 通过照片地址查询该条信息的uid，并返回
         Picture p = pictureService.selectUidByUrl(frontUrl);
-
-
 
         // 判断是否有链接没有处于判图状态
         if (sseCache.size()>0){
@@ -178,6 +179,8 @@ public class PictureController {
         // 修改照片状态为以判图
         picture.setFlag(1);
         int i = pictureService.addResult(picture);
+
+        // TODO 通知设备要开包
 
 
         if (i != 0) {
@@ -268,6 +271,7 @@ public class PictureController {
      * @param
      * @return
      */
+
 /*    public void selectPictureByStationUid(String stationUid) throws IOException {
         // 获取当前系统的分隔符 \ 或者是 /
         String SEPARATOR = File.separator;
@@ -352,18 +356,11 @@ public class PictureController {
     public SseEmitter drawingJudgment(String userUid) {
 
         // 超时时间设置为1小时
-        SseEmitter sseEmitter = new SseEmitter(3600_000L);
+        SseEmitter sseEmitter = new SseEmitter(60_000L);
 
-
-        // 根据userUid 查找stationUid
-        //String stationUid = userService.findStationUidByUserUid(userUid);
-
+        // 该链接没有判图的标志
         String s = userUid+"+1";
-        System.out.println("s===><"+s);
         // 将stationUid作为key放入map中，设置连接缓存
-//        Map map = new HashMap();
-//        map.put(userUid,0);
-//        sseCache.putAll(map);
         sseCache.put(userUid, sseEmitter);
         sseCache.put(s,sseEmitter);
 
@@ -375,6 +372,7 @@ public class PictureController {
         }
 
         sseEmitter.onTimeout(() -> sseCache.remove(userUid));
+        sseEmitter.onTimeout(()->sseCache.remove(s));
         sseEmitter.onCompletion(() -> System.out.println("完成！！！"));
         return sseEmitter;
     }
@@ -385,7 +383,7 @@ public class PictureController {
 
         SseEmitter sseEmitter = sseCache.get(userUid);
         String user = userUid+"+1";
-        System.out.println("user==<>"+user);
+       // System.out.println("user==<>"+user);
         sseCache.remove(user);
         if (sseEmitter != null) {
             sseEmitter.send(pictureVo);
@@ -402,7 +400,7 @@ public class PictureController {
     public RespValue loginOut(@RequestBody ReqValue reqValue){
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-        System.out.println("userUid===>"+jsonObject.getString("userUid"));
+       // System.out.println("userUid===>"+jsonObject.getString("userUid"));
         SseEmitter remove = sseCache.remove(jsonObject.getString("userUid"));
         if (remove != null){
 
@@ -443,7 +441,6 @@ public class PictureController {
             return new RespValue(200, "success", null);
         }
         return new RespValue(500, "Failed to modify information ", null);
-
     }
 
 

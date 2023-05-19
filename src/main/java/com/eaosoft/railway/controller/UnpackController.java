@@ -7,6 +7,7 @@ import com.eaosoft.railway.entity.Unpack;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUnpackService;
 import com.eaosoft.railway.utils.*;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -84,7 +85,7 @@ public class UnpackController {
         String createTime = jsonObject.getString("createTime");
 
        // System.out.println("pageSize:" + pageSize + ",currentPage" + currentPage + ",stationName" + stationName + ",createTime" + createTime);
-        List<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationName, createTime);
+        PageInfo<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationName, createTime);
         return new RespValue(200, "success", list);
     }
 

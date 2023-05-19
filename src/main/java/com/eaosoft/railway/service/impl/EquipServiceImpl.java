@@ -118,4 +118,21 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
         Equip equip = equipMapper.equipLogin(username);
         return equip;
     }
+
+    @Override
+    public int updateEquip(Equip equip) {
+        int i = equipMapper.updateById(equip);
+        return i;
+    }
+
+    @Override
+    public PageInfo<Equip> selectEquipByCondition(Equip equip, Integer pageSize, Integer currentPage) {
+        PageHelper.startPage(currentPage,pageSize);
+
+        List<Equip> list = equipMapper.selectEquipByCondition(
+                equip.getStationUid(),equip.getEquipName(), equip.getSerialNo(),equip.getState());
+        PageInfo pageInfo = new PageInfo(list);
+
+        return pageInfo;
+    }
 }

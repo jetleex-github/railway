@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.eaosoft.railway.entity.Equip;
+import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.service.IEquipService;
+import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
 import com.github.pagehelper.PageInfo;
@@ -31,6 +33,9 @@ public class EquipController {
 
     @Autowired
     private IEquipService equipService;
+
+    @Autowired
+    private IStationService stationService;
 
     /**
      * 根据站点名称查询设备,用于树形结构查看该站点绑定了哪些设备
@@ -229,5 +234,56 @@ public class EquipController {
         return new RespValue(500, "error", null);
     }
 
+    /**
+     * 修改设备信息
+     *
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/updateEquip.do")
+    public RespValue updateEquip(@RequestBody ReqValue reqValue) {
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        Equip equip = new Equip();
+        if (StringUtils.isBlank(jsonObject.getString("uid"))){
+            return new RespValue(500,"The uid cannot empty",null);
+        }
+        equip.setUid(jsonObject.getString("uid"));
+        equip.setProducer(jsonObject.getString("producer"));
+        equip.setIpAddr(jsonObject.getString("ipAddr"));
+        int i = equipService.updateEquip(equip);
+        if (i != 0){
+            return new RespValue(200, "success", null);
+        }
+        return new RespValue(500, "error", null);
+    }
 
+    /**
+     * 根据条件查询该站点下的设备
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/selectEquipByCondition.do")
+    public RespValue selectEquipByCondition(@RequestBody ReqValue reqValue){
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        String stationName = jsonObject.getString("stationName");
+        // 判断站点名称是否存在
+        if (StringUtils.isBlank(stationName)){
+            return new RespValue(500,"The stationName cannot empty",null);
+        }
+        // 通过站点名称获取站点信息
+        Station station = stationService.findStation(stationName);
+        String stationUid = station.getUid();
+
+        Equip equip = new Equip();
+        equip.setStationUid(stationUid);
+        equip.setEquipName(jsonObject.getString("equipName"));
+        equip.setSerialNo(jsonObject.getString("serialNo"));
+        equip.setState(jsonObject.getInteger("state"));
+        Integer pageSize = jsonObject.getInteger("pageSize");
+        Integer currentPage = jsonObject.getInteger("currentPage");
+        PageInfo<Equip> pageInfo =equipService.selectEquipByCondition(equip,pageSize,currentPage);
+        return new RespValue(200,"success",pageInfo);
+    }
 }
