@@ -105,5 +105,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         return list;
     }
 
+    @Override
+    public Role findRoleByCaption(Integer caption) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("caption",caption);
+        Role role = roleMapper.selectOne(wrapper);
+        return role;
+    }
+
 
 }

@@ -97,7 +97,7 @@ public class LoginController {
     }
 
     /**
-     * ]
+     *
      * 设备登录
      *
      * @param reqValue
@@ -138,7 +138,7 @@ public class LoginController {
             // 登录成功设置登陆状态
             loginLog.setState("成功");
             // 将登录日志添加到数据库
-           // loginLogService.insertLoginLog(loginLog);
+            loginLogService.insertLoginLog(loginLog);
 
 
             response.setHeader("Authorization", token);
@@ -148,8 +148,12 @@ public class LoginController {
             respVo.setToken(token);
             return new RespValue(200,"success",respVo);
         }
+        // 登录失败设置登陆状态
+        loginLog.setState("失败");
+        // 将登录日志添加到数据库
+        loginLogService.insertLoginLog(loginLog);
 
-        return null;
+        return new RespValue(500,"The account or password is incorrect",null);
     }
 
 

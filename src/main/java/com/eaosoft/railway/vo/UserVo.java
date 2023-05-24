@@ -90,7 +90,7 @@ public class UserVo {
 
     @ExcelProperty("所属站点")
     @ColumnWidth(10)
-    private String station;
+    private String stationUid;
 
     @ExcelProperty("职位")
     @ColumnWidth(10)

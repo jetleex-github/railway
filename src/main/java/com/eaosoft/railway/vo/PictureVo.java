@@ -13,5 +13,6 @@ public class PictureVo {
     private Object rightPicture;
     private Object leftPicture;
     private Object frontPicture;
+    private String equipUid;
 
 }

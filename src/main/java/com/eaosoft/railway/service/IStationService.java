@@ -31,4 +31,6 @@ public interface IStationService extends IService<Station> {
     ArrayList<List> find(String uid);
 
     Station findStation(String stationName);
+
+    Station findStationByUid(String stationUid);
 }

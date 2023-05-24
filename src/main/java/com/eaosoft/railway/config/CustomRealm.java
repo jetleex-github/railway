@@ -1,5 +1,6 @@
 package com.eaosoft.railway.config;
 
+import com.alibaba.fastjson.JSON;
 import com.eaosoft.railway.entity.JWTToken;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IUserService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @ Program       :  com.ljnt.blog.config.CustomRealm
@@ -45,26 +47,36 @@ public class CustomRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        System.out.println("用户授权");
-        System.out.println("===>>>"+principalCollection.toString());
-        String username=TokenUtil.getUsername(principalCollection.toString());
-        SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
-        //正确的业务流程是到数据库拿该用户的权限再去进行授权的，这里只是简单的直接授权
-        if (username.equals("admin")){
-            Set<String> role=new HashSet<>();
-            role.add("admin");
-            info.setRoles(role);
-        }else {
-            Set<String> role=new HashSet<>();
-            role.add("user");
-            info.setRoles(role);
-        }
-        return info;
+       System.out.println("用户授权");
+//        System.out.println("===>>>"+principalCollection.toString());
+//        String username=TokenUtil.getUsername(principalCollection.toString());
+//        User user = userService.selectByUsername(username);
+//        SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
+//        info.addRole(username);
+
+       // Set<String> roles = user.getUsername();
+        // 正确的业务流程是到数据库拿该用户的权限再去进行授权的，这里只是简单的直接授权
+//        Integer caption = user.getCaption();
+//        if (user.getCaption()!=0){
+//            Set<String> role=new HashSet<>();
+//            role.add("admin");
+//            info.setRoles(role);
+//        }else {
+//            Set<String> role=new HashSet<>();
+//            role.add("user");
+//            info.setRoles(role);
+//        }
+        //info.setRoles(user.getUsername());
+       // return info;
+        return null;
+
+
 //        SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
 //        Set<String> role=new HashSet<>();
 //        role.add("user");
 //        info.setRoles(role);
 //        return info;
+
     }
 
     /**

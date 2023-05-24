@@ -42,7 +42,7 @@ public interface IUserService extends IService<User> {
 
     int batchDelete(Object requestDatas);
 
-    PageInfo<User> findAll(Integer currentPage, Integer pageSize, User user);
+    List<User> findAll(String routeName);
 
     int changeState(User user);
 
@@ -65,11 +65,13 @@ public interface IUserService extends IService<User> {
 
     List<User> exportModel(String uid);
 
-    void importUser(MultipartFile file, IUserService userService);
+    void importUser(MultipartFile file, IUserService userService,IStationService stationService);
 
     List<UserVo> exportUser();
 
     int changeIdentity(User user);
+
+    PageInfo<User> findAllUserByRouteNameAndStationUid(Integer pageSize, Integer currentPage, User user);
 
 
 

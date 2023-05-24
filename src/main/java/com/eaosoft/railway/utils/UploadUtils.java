@@ -46,7 +46,7 @@ public class UploadUtils {
         }
         String substring = name.substring(0, 7);
 
-        if (substring.equals("aiofile")) {
+        if (substring.equals("ioafile")) {
             // 根据文件名获得文件夹的名称
             path = name.substring(0, 7) + SEPARATOR
                     + name.substring(7, 11) + SEPARATOR
@@ -89,7 +89,7 @@ public class UploadUtils {
             }else {
                 day = String.valueOf(d);
             }
-            path = "aiofile" + SEPARATOR
+            path = "ioafile" + SEPARATOR
                     + calendar.get(Calendar.YEAR) + SEPARATOR
                     + month + SEPARATOR
                     + day + SEPARATOR

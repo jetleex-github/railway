@@ -38,8 +38,70 @@
     <select id="exportModel" resultType="com.eaosoft.railway.entity.User">
         select * from rw_user where uid = #{uid}
     </select>
+<!--    查询今天添加的数据-->
     <select id="exportUser" resultType="com.eaosoft.railway.vo.UserVo">
         SELECT * FROM rw_user WHERE TO_DAYS( create_time) = TO_DAYS(NOW());
+    </select>
+<!--    普通管理员查询到的数据-->
+    <select id="findAllUserByRouteNameAndStationUid" resultType="com.eaosoft.railway.entity.User">
+        SELECT u.uid,
+               u.serial_no,
+               u.username,
+               u.caption,
+               u.gender,
+               u.age,
+               u.phone,
+               u.address,
+               u.create_time,
+               u.state,
+               u.real_name,
+               u.id_card,
+               u.email,
+               u.station_uid,
+               s.station_name station_name,
+               r.position
+        FROM rw_user u
+                 JOIN rw_station s ON u.station_uid = s.uid
+                 join rw_role r on u.position = r.caption
+        WHERE u.route_name = #{routeName}
+          and u.is_deleted = 1
+    </select>
+
+<!--    超级管理员查询到的数据-->
+    <select id="findAllUser" resultType="com.eaosoft.railway.entity.User">
+        SELECT DISTINCT
+            u.uid,
+            u.serial_no,
+            u.username,
+            u.caption,
+            u.gender,
+            u.age,
+            u.phone,
+            u.address,
+            u.create_time,
+            u.position,
+            u.state,
+            u.real_name,
+            u.id_card,
+            u.email,
+            u.station_uid,
+            a.station_name station_name
+        FROM
+            rw_user u
+                RIGHT JOIN (
+                SELECT
+                    s.station_name,
+                    s.uid
+                FROM
+                    rw_station s
+                        JOIN rw_user u2 ON u2.station_uid = s.uid
+                        AND u2.caption = '1'
+                        AND u2.is_deleted = '1'
+            ) a ON u.station_uid = a.uid
+        WHERE
+            u.is_deleted = 1
+          and u.route_name = #{routeName}
+          and u.caption != 99
     </select>
 
 

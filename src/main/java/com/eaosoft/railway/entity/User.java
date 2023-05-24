@@ -117,8 +117,12 @@ public class User implements Serializable {
 
     @ApiModelProperty("所属站点uid")
     @ColumnWidth(10)
-    @ExcelProperty("所属站点uid")
+    @ExcelProperty("所属站点名称")
     private String stationUid;
+
+    @ApiModelProperty("所属站点")
+    @ExcelIgnore
+    private String stationName;
 
     @ApiModelProperty("线路名称")
     @ColumnWidth(20)

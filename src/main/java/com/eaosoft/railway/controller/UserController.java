@@ -5,9 +5,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
+import com.eaosoft.railway.entity.Role;
 import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.ILoginLogService;
+import com.eaosoft.railway.service.IRoleService;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MD5Utils;
@@ -17,7 +19,9 @@ import com.eaosoft.railway.utils.RespValue;
 
 import com.eaosoft.railway.utils.TokenUtil;
 import com.eaosoft.railway.vo.UserVo;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +56,9 @@ public class UserController {
 
     @Autowired
     private IStationService stationService;
+
+    @Autowired
+    private IRoleService roleService;
 
 
     /**
@@ -80,6 +88,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/addUser.do")
+
     public RespValue addUser(@RequestBody ReqValue reqValue) {
         User user1 = new User();
         Object requestDatas = reqValue.getRequestDatas();
@@ -113,7 +122,7 @@ public class UserController {
             if (jsonObject.getInteger("caption").equals(0)) {
                 // 添加管理员，只添加所在线路，不添加站点
                 user1.setRouteName(jsonObject.getString("routeName"));
-                user1.setPosition("管理员");
+                user1.setPosition("999");
                 String userSerial = getUserSerial();
                 user1.setSerialNo("G" + userSerial);
             } else {
@@ -136,7 +145,8 @@ public class UserController {
                 if (jsonObject.getString("position") == null || jsonObject.getString("position") == "") {
                     return new RespValue(500, "The position cannot be empty", null);
                 }
-                user1.setPosition(jsonObject.getString("position"));
+                Role role = roleService.findRoleByPosition(jsonObject.getString("position"), "五号线");
+                user1.setPosition(String.valueOf(role.getCaption()));
 
                 //根据当前时间，设置用户编号
                 Boolean a = true;
@@ -186,7 +196,7 @@ public class UserController {
 
             // 判断身份证号是否重复
             List<User> user2 = userService.findByIdCard(jsonObject.getString("idCard"));
-            System.out.println("user2========>"+user2);
+           // System.out.println("user2========>"+user2);
             if (user2.size() != 0) {
                 return new RespValue(500, "The idCard already exist", null);
             }
@@ -222,6 +232,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/findByUsername.do")
+   // @RequiresPermissions("findByUsername")
     public RespValue findByUsername(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
@@ -260,6 +271,7 @@ public class UserController {
      * @return
      */
     @RequestMapping("/modifyUserInfo.do")
+
     public RespValue modifyUserInfo(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
@@ -271,11 +283,13 @@ public class UserController {
         }
         // 判断用户名是否存在
         User user = userService.selectByUsername(jsonObject.getString("username"));
-        if (user != null){
+        if (!user.getUid().equals(jsonObject.getString("uid"))){
             return new RespValue(500,"The username already exist",null);
         }
         user1.setUsername(jsonObject.getString("username"));
-        user1.setCaption(jsonObject.getInteger("caption"));
+        Role role = roleService.findRoleByPosition(jsonObject.getString("position"), "五号线");
+        // jsonObject.getInteger("position")
+        user1.setPosition(String.valueOf(role.getCaption()));
         user1.setGender(jsonObject.getInteger("gender"));
         user1.setAge(jsonObject.getInteger("age"));
         user1.setPhone(jsonObject.getString("phone"));
@@ -332,14 +346,25 @@ public class UserController {
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
-        System.out.println("pageSize==>" + pageSize + ",currentPage==>" + currentPage);
+       
         User user = new User();
 
         user.setRouteName(jsonObject.getString("routeName"));
-        PageInfo<User> pageInfo = userService.findAll(currentPage, pageSize, user);
-        // PageInfo<User> pageInfo = userService.findAllUser(currentPage,pageSize,user);
+        //user.setStationUid(jsonObject.getString("stationUid"));
+     //   System.out.println("routeName==>"+user.getRouteName()+",stationUid==>"+user.getStationUid());
+        PageInfo<User> users = userService.findAllUserByRouteNameAndStationUid(pageSize,currentPage,user);
+//        PageHelper.startPage(currentPage,pageSize);
+//        List<User> users = userService.findAll(jsonObject.getString("routeName"));
+//        for (int i = 0; i < users.size(); i++) {
+//
+//        }
+      //  PageInfo pageInfo = new PageInfo(users);
+//        for (int i = 0; i < pageInfo.getPageSize(); i++) {
+//            stationService.find(pageInfo.)
+//        }
 
-        return new RespValue(200, "success", pageInfo);
+    //    System.out.println("users---->"+users);
+        return new RespValue(200, "success", users);
     }
 
 
@@ -414,13 +439,19 @@ public class UserController {
      */
     @GetMapping("/exportModel.do")
     public void exportModel(HttpServletResponse response) {
-        List<User> user = userService.exportModel("1638081879957639170");
-        System.out.println("userVo===>" + user);
+        List<User> list = userService.exportModel("1638081879957639170");
+        System.out.println("userVo===>" + list);
+        // 将站点uid换成站点名称
+        for (int i = 0; i < list.size(); i++) {
+            String stationUid = list.get(i).getStationUid();
+            Station station = stationService.findStationByUid(stationUid);
+            list.get(i).setStationUid(station.getStationName());
+        }
         // 获取消息头
         response.setHeader("content-disposition", "attachment;filename=userModel_" + System.currentTimeMillis() + ".xlsx");
         // 生成excel并导出
         try {
-            EasyExcel.write(response.getOutputStream(), User.class).sheet("用户导入模板").doWrite(user);
+            EasyExcel.write(response.getOutputStream(), User.class).sheet("用户导入模板").doWrite(list);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -436,16 +467,24 @@ public class UserController {
     @PostMapping("/invokeUser.do")
     public void invokeAdmin(@RequestParam(value = "file", required = false) MultipartFile file,
                             HttpServletResponse response) {
-        userService.importUser(file, userService);
+        userService.importUser(file, userService,stationService);
 
         // 查询今天创建的人员信息
         List<UserVo> userVos = userService.exportUser();
         for (UserVo userVo : userVos) {
             userVo.setPassword("123456");
         }
+        // 将站点uid换成站点名称
         for (int i = 0; i < userVos.size(); i++) {
-            System.out.println(userVos.get(i));
+            String stationUid = userVos.get(i).getStationUid();
+            if (!StringUtils.isBlank(stationUid)){
+                Station station = stationService.findStationByUid(stationUid);
+                userVos.get(i).setStationUid(station.getStationName());
+            }
         }
+//        for (int i = 0; i < userVos.size(); i++) {
+//            System.out.println(userVos.get(i));
+//        }
         // 获取消息头
         response.setHeader("content-disposition", "attachment;filename=importUser_" + System.currentTimeMillis() + ".xlsx");
         // 生成excel并导出

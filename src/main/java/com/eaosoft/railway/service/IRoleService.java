@@ -29,4 +29,6 @@ public interface IRoleService extends IService<Role> {
     int modifyRole(Role role);
 
     List findAllRoleName(String routeName);
+
+    Role findRoleByCaption(Integer caption);
 }

@@ -1,6 +1,8 @@
 package com.eaosoft.railway.entity;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -62,4 +64,8 @@ public class Role implements Serializable {
 
     @ApiModelProperty("备注")
     private String note;
+
+    @ApiModelProperty("状态（0-存在，1-删除）")
+    @TableLogic(value = "0",delval = "1")
+    private Integer isDeleted;
 }

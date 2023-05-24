@@ -135,4 +135,10 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
 
         return pageInfo;
     }
+
+    @Override
+    public Equip findEquipByEquipUid(String equipUid) {
+        Equip equip = equipMapper.selectById(equipUid);
+        return equip;
+    }
 }

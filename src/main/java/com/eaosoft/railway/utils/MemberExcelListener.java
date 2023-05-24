@@ -2,7 +2,9 @@ package com.eaosoft.railway.utils;
 
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.entity.User;
+import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 
 import java.time.LocalDateTime;
@@ -16,13 +18,15 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
 
     // 由于 MemberExcelListener 不能交给Spring管理 所以我们只能手动传入 userService
     public IUserService userService;
+    public IStationService stationService;
 
-    public MemberExcelListener(){
+    public MemberExcelListener() {
 
     }
 
-    public MemberExcelListener(IUserService userService){
+    public MemberExcelListener(IUserService userService, IStationService stationService) {
         this.userService = userService;
+        this.stationService = stationService;
     }
 
     @Override
@@ -44,7 +48,12 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
             user.setUpdateTime(LocalDateTime.now());
             user.setRouteName(users.getRouteName());
 
-           // user.setStation(users.getStation());
+            // 根据站点名称获取站点信息
+            Station station = stationService.findStation(users.getStationUid());
+
+            if (station != null) {
+                user.setStationUid(station.getUid());
+            }
             user.setCaption(1);
             String userSerial = getUserSerial(userService);
             user.setSerialNo(userSerial);
@@ -52,7 +61,6 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
         }
 
         // do something
-
 
         // System.out.println("读取Member=" + member);
         // do something

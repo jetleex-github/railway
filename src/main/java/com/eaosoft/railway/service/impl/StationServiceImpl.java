@@ -54,6 +54,12 @@ public class StationServiceImpl extends ServiceImpl<StationMapper, Station> impl
         return station;
     }
 
+    @Override
+    public Station findStationByUid(String stationUid) {
+        Station station = stationMapper.selectById(stationUid);
+        return station;
+    }
+
     /**
      * 根据线路名称查询该线路下的所有站点信息，用于树形菜单
      * @param routeName

@@ -41,4 +41,8 @@ public interface UserMapper extends BaseMapper<User> {
     List<User> exportModel(@Param("uid") String uid);
 
     List<UserVo> exportUser();
+
+    List<User> findAllUserByRouteNameAndStationUid(@Param("routeName") String routeName);
+
+    List<User> findAllUser( @Param("routeName") String routeName);
 }

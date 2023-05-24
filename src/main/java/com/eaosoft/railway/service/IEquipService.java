@@ -40,4 +40,6 @@ public interface IEquipService extends IService<Equip> {
     int updateEquip(Equip equip);
 
     PageInfo<Equip> selectEquipByCondition(Equip equip, Integer pageSize, Integer currentPage);
+
+    Equip findEquipByEquipUid(String equipUid);
 }

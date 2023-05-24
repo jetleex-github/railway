@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.eaosoft.mqtt.MQTTServer;
+import com.eaosoft.railway.entity.Equip;
 import com.eaosoft.railway.entity.Picture;
+import com.eaosoft.railway.service.IEquipService;
 import com.eaosoft.railway.service.IPictureService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.ReqValue;
@@ -63,6 +65,9 @@ public class PictureController {
     @Autowired
     private IPictureService pictureService;
 
+    @Autowired
+    private IEquipService equipService;
+
 
 
     /**
@@ -71,14 +76,14 @@ public class PictureController {
      * @param rightFile  右侧图片
      * @param leftFile   左侧图片
      * @param frontFile  正面图片
-     * @param stationUid 站点uid
+     * @param equipUid 站点uid
      */
     @PostMapping("/insertPictures.do")
     public RespValue insertPictures(
             @RequestParam(value = "rightFile", required = false) MultipartFile rightFile,
             @RequestParam(value = "leftFile", required = false) MultipartFile leftFile,
             @RequestParam(value = "frontFile", required = false) MultipartFile frontFile,
-            String stationUid) {
+            String equipUid) {
 
         // 正面照片不能为空
         if (frontFile == null) {
@@ -110,7 +115,11 @@ public class PictureController {
         picture.setRightPicture(rightUrl);
         picture.setLeftPicture(leftUrl);
         picture.setFrontPicture(frontUrl);
-        picture.setStationUid(stationUid);
+
+        // 根据equipUid查询设备信息
+        Equip equip = equipService.findEquipByEquipUid(equipUid);
+        picture.setStationUid(equip.getStationUid());
+        picture.setEquipUid(equipUid);
 
         // 设置创建时间
         picture.setCreateTime(LocalDateTime.now());
@@ -255,6 +264,8 @@ public class PictureController {
                 pictureVo.setRightPicture(rightPicture);
             }
 
+            //
+            pictureVo.setEquipUid(picture.getEquipUid());
 
             //将查询到的数据发送给前端
             push(userUid, pictureVo);
@@ -355,8 +366,8 @@ public class PictureController {
     @GetMapping(path = "/drawingJudgment.do")
     public SseEmitter drawingJudgment(String userUid) {
 
-        // 超时时间设置为1小时
-        SseEmitter sseEmitter = new SseEmitter(60_000L);
+        // 超时时间设置为24小时
+        SseEmitter sseEmitter = new SseEmitter(24*60*60_000L);
 
         // 该链接没有判图的标志
         String s = userUid+"+1";

@@ -4,7 +4,9 @@ import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.User;
+import com.eaosoft.railway.mapper.StationMapper;
 import com.eaosoft.railway.mapper.UserMapper;
+import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MemberExcelListener;
 import com.eaosoft.railway.utils.TokenUtil;
@@ -23,7 +25,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author zzs
@@ -36,29 +38,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private UserMapper userMapper;
 
     /**
-     *
      * @param username
      * @param password
      * @return
      */
     @Override
     public User login(String username, String password) {
-        User user  =  userMapper.selectByUsernameAndPassword(username,password);
+        User user = userMapper.selectByUsernameAndPassword(username, password);
         return user;
     }
 
     /**
      * 根据用户名模糊查询用户
+     *
      * @param username
      * @return
      */
 
     @Override
-    public PageInfo<User> findByUsername(Integer currentPage,Integer pageSize,String username) {
-        PageHelper.startPage(currentPage,pageSize);
+    public PageInfo<User> findByUsername(Integer currentPage, Integer pageSize, String username) {
+        PageHelper.startPage(currentPage, pageSize);
         QueryWrapper wrapper = new QueryWrapper();
         // wrapper.eq("username",username);
-        wrapper.like("username",username);
+        wrapper.like("username", username);
         List list = userMapper.selectList(wrapper);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
@@ -66,17 +68,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * Check whether the username exists
+     *
      * @param username
      * @return
      */
     @Override
     public User selectByUsername(String username) {
-       User user= userMapper.selectByUsername(username);
+        User user = userMapper.selectByUsername(username);
         return user;
     }
 
     /**
      * addUser
+     *
      * @param user
      * @return
      */
@@ -128,6 +132,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 退出登录
+     *
      * @param token
      * @return
      */
@@ -140,6 +145,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 根据uid修改用户信息
+     *
      * @param user
      * @return
      */
@@ -151,6 +157,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 修改用户密码
+     *
      * @param user
      * @return
      */
@@ -189,6 +196,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 根据token获取用户名
+     *
      * @param token
      * @return
      */
@@ -215,6 +223,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 员工离职
+     *
      * @param requestDatas
      * @return
      */
@@ -226,22 +235,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 模糊查询该站点下所有用户信息
-     * @param currentPage 第几页
-     * @param pageSize 每页显示条数
-     * @param user
+     *
+     * @param routeName
      * @return
      */
     @Override
-    public PageInfo<User> findAll(Integer currentPage, Integer pageSize, User user) {
-        PageHelper.startPage(currentPage,pageSize);
-        List<User> outInformations = userMapper.selectByCondition(user.getRouteName());
-        PageInfo pageInfo = new PageInfo(outInformations);
-        return pageInfo;
+    public List<User> findAll(String routeName) {
+
+        List<User> users = userMapper.selectByCondition(routeName);
+
+
+        return users;
     }
 
 
     /**
      * 修改用户状态
+     *
      * @param user
      * @return
      */
@@ -255,46 +265,46 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     /**
      * 查询所有在职的用户名
+     *
      * @return
      */
     @Override
     public List<String> findAllUserUid() {
-        List<String> list =userMapper.findAllUserUid();
+        List<String> list = userMapper.findAllUserUid();
         return list;
     }
 
 
-
-
     /**
      * 查询工号是否重复
+     *
      * @param serialNo
      * @return
      */
     @Override
     public int findSerialNo(String serialNo) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("serial_no",serialNo);
+        wrapper.eq("serial_no", serialNo);
         User user = userMapper.selectOne(wrapper);
-        if (user ==null){
+        if (user == null) {
             return 0;
         }
         return 1;
     }
 
     @Override
-    public  List<User> findByIdCard(String idCard) {
+    public List<User> findByIdCard(String idCard) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("id_card",idCard);
+        wrapper.eq("id_card", idCard);
         List<User> list = userMapper.selectList(wrapper);
         return list;
     }
 
     @Override
-    public List<User>  findByEmail(String email) {
+    public List<User> findByEmail(String email) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("email",email);
-       // List<User>  user = userMapper.selectOne(wrapper);
+        wrapper.eq("email", email);
+        // List<User>  user = userMapper.selectOne(wrapper);
         List<User> list = userMapper.selectList(wrapper);
         return list;
     }
@@ -309,13 +319,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public User findBySerialNo(String serialNo) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("serial_no",serialNo);
+        wrapper.eq("serial_no", serialNo);
         User user = userMapper.selectOne(wrapper);
         return user;
     }
 
     @Override
-    public String findStationUidByUserUid(String uid){
+    public String findStationUidByUserUid(String uid) {
         String stationUid = userMapper.findStationUidByUserUid(uid);
         return stationUid;
     }
@@ -328,9 +338,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     // 批量导入人员信息
     @Override
-    public void importUser(MultipartFile file, IUserService userService){
+    public void importUser(MultipartFile file, IUserService userService, IStationService stationService) {
         try {
-            EasyExcel.read(file.getInputStream(), User.class, new MemberExcelListener(userService)).sheet().doRead();
+            EasyExcel.read(file.getInputStream(), User.class, new MemberExcelListener(userService, stationService)).sheet().doRead();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -352,6 +362,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         wrapper.eq("caption",0);*/
         int i = userMapper.updateById(user);
         return i;
+    }
+
+    @Override
+    public PageInfo<User> findAllUserByRouteNameAndStationUid(Integer pageSize, Integer currentPage, User user) {
+        PageHelper.startPage(currentPage, pageSize);
+
+            List<User> list = userMapper.findAllUserByRouteNameAndStationUid(user.getRouteName());
+            PageInfo<User> pageInfo = new PageInfo(list);
+            return pageInfo;
+
+
+//        // 超级管理员查询到的数据
+//        List<User> list = userMapper.findAllUser(user.getRouteName());
+//        PageInfo<User> pageInfo = new PageInfo(list);
+//        return pageInfo;
     }
 
 

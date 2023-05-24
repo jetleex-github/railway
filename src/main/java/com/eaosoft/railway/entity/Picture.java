@@ -55,6 +55,9 @@ public class Picture implements Serializable {
     @ApiModelProperty("判图人uid")
     private String userUid;
 
+    @ApiModelProperty("上传照片的设备uid")
+    private String equipUid;
+
     @ApiModelProperty("判图人声音")
     private String voice;
 

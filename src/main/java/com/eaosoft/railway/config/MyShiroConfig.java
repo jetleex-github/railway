@@ -1,6 +1,8 @@
 package com.eaosoft.railway.config;
 
 import com.eaosoft.railway.filter.JWTFilter;
+import com.eaosoft.railway.filter.URLPathMatchingFilter;
+import com.eaosoft.railway.filter.UrlFilter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
@@ -28,13 +30,23 @@ public class MyShiroConfig {
     @Bean
     public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager){
         ShiroFilterFactoryBean shiroFilterFactoryBean=new ShiroFilterFactoryBean();
+
+        //自定义拦截器
         Map<String, Filter> filterMap=new LinkedHashMap<>();
         filterMap.put("jwt", new JWTFilter());
+        filterMap.put("url",new UrlFilter());
+        // 访问权限配置
+       // filterMap.put("requestURL",new URLPathMatchingFilter());
         shiroFilterFactoryBean.setFilters(filterMap);
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         //不要用HashMap来创建Map，会有某些配置失效，要用链表的LinkedHashmap
         Map<String,String> filterRuleMap=new LinkedHashMap<>();
-        //放行接口
+
+
+
+
+        /* 配置映射关系*/
+        //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
         filterRuleMap.put("/","anon");
         filterRuleMap.put("/webjars/**","anon");
         filterRuleMap.put("/login","anon");
@@ -43,17 +55,21 @@ public class MyShiroConfig {
         filterRuleMap.put("/js/**","anon");
         filterRuleMap.put("/lib/**","anon");
         filterRuleMap.put("/railway/login/login.do","anon");
-        filterRuleMap.put("/railway/login//equipLogin.do","anon");
+        filterRuleMap.put("/railway/login/equipLogin.do","anon");
 
         filterRuleMap.put("/railway/picture/drawingJudgment.do","anon");
 
         filterRuleMap.put("/railway/user/exportModel.do","anon");
+        //filterRuleMap.put("/railway/**","authc");
         //拦截所有接口
         filterRuleMap.put("/**","jwt");
+
+        filterRuleMap.put("/railway/**","url");
+
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return shiroFilterFactoryBean;
-
     }
+
 
 
     @Bean
@@ -69,6 +85,7 @@ public class MyShiroConfig {
         securityManager.setSubjectDAO(subjectDAO);
         return securityManager;
     }
+
 
     /**
      * 配置代理会导致doGetAuthorizationInfo执行两次
