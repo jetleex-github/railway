@@ -6,7 +6,11 @@ import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.UnauthorizedException;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.PathMatchingFilter;
+import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -48,7 +52,14 @@ public class UrlFilter extends PathMatchingFilter {
        /// String userIdStr = JwtUtil.getUserIdByToken(token);
 
         System.out.println("------------------");
-        //是否携带请求token以及token是否有效
+        Subject subject = SecurityUtils.getSubject();
+
+        // 判断是否时登录放行路径
+        if (uri.equals("/railway/login/login.do")){
+            return true;
+        }
+
+        // 不是登录放行路径，判断是否携带请求token以及token是否有效
         if (StringUtils.hasText(token) && redisTemplate.hasKey(token)) {
             ValueOperations<String, String> forValue = redisTemplate.opsForValue();
             String json = forValue.get(token);
@@ -62,8 +73,11 @@ public class UrlFilter extends PathMatchingFilter {
             }
         }else {
 //            HttpServletResponse httpResponse = (HttpServletResponse) response;
-//             ResponseUtil.jsonResponse(httpResponse, HttpStatus.FORBIDDEN.value(),
-//                "用户(" + userId + ")无此url(" + uri + ")权限");
+////             ResponseUtil.jsonResponse(httpResponse, HttpStatus.FORBIDDEN.value(),
+////                "用户(" + userId + ")无此url(" + uri + ")权限");
+            UnauthorizedException ex = new UnauthorizedException("当前用户没有访问路径" + uri + "的权限");
+            subject.getSession().setAttribute("ex",ex);
+            WebUtils.issueRedirect(request, response, "/unauthorized");
             return false;
         }
  

@@ -5,9 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Base64;
 import java.util.Calendar;
 
 
@@ -23,6 +22,10 @@ public class UploadUtils {
     public void setFileSavePath(String path) {
         UploadUtils.fileSavePath = path;
     }
+
+    // 获取当前系统的分隔符 \ 或者是 /
+    private static String SEPARATOR = File.separator;
+
 
     /**
      * 上传图片和声音
@@ -119,4 +122,41 @@ public class UploadUtils {
         // 返回相对路径地址
         return name;
     }
+
+    /**
+     * 将文件转换成base64的数据流
+     *
+     * @param imagePath
+     * @return
+     */
+    public static String getLocalImage(String imagePath) throws IOException {
+
+        // 拼接获取文件所在路径
+        String path = fileSavePath + SEPARATOR
+                + imagePath.substring(0, 7) + SEPARATOR
+                + imagePath.substring(7, 11) + SEPARATOR
+                + imagePath.substring(11, 13) + SEPARATOR
+                + imagePath.substring(13, 15) + SEPARATOR
+                + imagePath.substring(15, 17) + SEPARATOR
+                + imagePath;
+        // 获取图片
+        File imageFile = new File(path);
+        // 获取文件名
+        String name = imageFile.getName();
+
+        // 获取文件后缀名
+        String substring = name.substring(name.lastIndexOf("."));
+        // 将文件转换成byte流
+        FileInputStream in = new FileInputStream(imageFile);
+        byte[] imageBytes = new byte[(int) imageFile.length()];
+        in.read(imageBytes);
+        in.close();
+
+        // 添加base64字节头，拼接成base64的完整格式
+        String base64Image = "data:image/" + substring+ " ;base64," + Base64.getEncoder().encodeToString(imageBytes);
+        return base64Image;
+
+
+    }
+
 }

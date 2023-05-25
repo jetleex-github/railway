@@ -53,8 +53,7 @@ public class PictureController {
     // 文件保存在服务器的根路径
     private static String fileSavePath;
 
-    // 获取当前系统的分隔符 \ 或者是 /
-    private static String SEPARATOR = File.separator;
+
 
     // 通过配置文件，映射图片上传到服务器的根路径
     @Value("${file.save.path}")
@@ -252,19 +251,19 @@ public class PictureController {
 
             if (!StringUtils.isBlank(picture.getLeftPicture())) {
                 // 通过文件名获取文件地址，并将文件转换成base64的字符流
-                String leftPicture = getLocalImage(picture.getLeftPicture());
+                String leftPicture = UploadUtils.getLocalImage(picture.getLeftPicture());
                 pictureVo.setLeftPicture(leftPicture);
             }
             if (!StringUtils.isBlank(picture.getFrontPicture())) {
-                String frontPicture = getLocalImage(picture.getFrontPicture());
+                String frontPicture = UploadUtils.getLocalImage(picture.getFrontPicture());
                 pictureVo.setFrontPicture(frontPicture);
             }
             if (!StringUtils.isBlank(picture.getRightPicture())) {
-                String rightPicture = getLocalImage(picture.getRightPicture());
+                String rightPicture = UploadUtils.getLocalImage(picture.getRightPicture());
                 pictureVo.setRightPicture(rightPicture);
             }
 
-            //
+            // 上传照片的设备uid
             pictureVo.setEquipUid(picture.getEquipUid());
 
             //将查询到的数据发送给前端
@@ -318,41 +317,7 @@ public class PictureController {
         push(stationUid, imageData);
     }*/
 
-    /**
-     * 将文件转换成base64的数据流
-     *
-     * @param imagePath
-     * @return
-     */
-    public String getLocalImage(String imagePath) throws IOException {
 
-        // 拼接获取文件所在路径
-        String path = fileSavePath + SEPARATOR
-                + imagePath.substring(0, 7) + SEPARATOR
-                + imagePath.substring(7, 11) + SEPARATOR
-                + imagePath.substring(11, 13) + SEPARATOR
-                + imagePath.substring(13, 15) + SEPARATOR
-                + imagePath.substring(15, 17) + SEPARATOR
-                + imagePath;
-        // 获取图片
-        File imageFile = new File(path);
-        // 获取文件名
-        String name = imageFile.getName();
-
-        // 获取文件后缀名
-        String substring = name.substring(name.lastIndexOf("."));
-        // 将文件转换成byte流
-        FileInputStream in = new FileInputStream(imageFile);
-        byte[] imageBytes = new byte[(int) imageFile.length()];
-        in.read(imageBytes);
-        in.close();
-
-        // 添加base64字节头，拼接成base64的完整格式
-        String base64Image = "data:image/" + substring+ " ;base64," + Base64.getEncoder().encodeToString(imageBytes);
-        return base64Image;
-
-
-    }
 
 
 

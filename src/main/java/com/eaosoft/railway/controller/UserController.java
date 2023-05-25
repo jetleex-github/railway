@@ -440,7 +440,7 @@ public class UserController {
     @GetMapping("/exportModel.do")
     public void exportModel(HttpServletResponse response) {
         List<User> list = userService.exportModel("1638081879957639170");
-        System.out.println("userVo===>" + list);
+
         // 将站点uid换成站点名称
         for (int i = 0; i < list.size(); i++) {
             String stationUid = list.get(i).getStationUid();
@@ -465,8 +465,9 @@ public class UserController {
      * @throws IOException
      */
     @PostMapping("/invokeUser.do")
-    public void invokeAdmin(@RequestParam(value = "file", required = false) MultipartFile file,
+    public void invokeAdmin(MultipartFile file,
                             HttpServletResponse response) {
+        // 通过监听的方式，将人员信息写入数据库
         userService.importUser(file, userService,stationService);
 
         // 查询今天创建的人员信息
@@ -489,8 +490,11 @@ public class UserController {
         response.setHeader("content-disposition", "attachment;filename=importUser_" + System.currentTimeMillis() + ".xlsx");
         // 生成excel并导出
         try {
+
             EasyExcel.write(response.getOutputStream(), UserVo.class).sheet("用户信息").doWrite(userVos);
+
         } catch (IOException e) {
+
             e.printStackTrace();
         }
 
@@ -509,7 +513,9 @@ public class UserController {
 
         User user = new User();
         user.setUid(jsonObject.getString("userUid"));
+        // 修改用户身份状态
         user.setCaption(0);
+        user.setPosition("999");
         user.setStationUid("");
         int i = userService.changeIdentity(user);
         if (i != 0) {

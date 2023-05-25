@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -84,9 +87,42 @@ public class UnpackController {
         String stationName = jsonObject.getString("stationName");
         String createTime = jsonObject.getString("createTime");
 
-       // System.out.println("pageSize:" + pageSize + ",currentPage" + currentPage + ",stationName" + stationName + ",createTime" + createTime);
+        // System.out.println("pageSize:" + pageSize + ",currentPage" + currentPage + ",stationName" + stationName + ",createTime" + createTime);
         PageInfo<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationName, createTime);
         return new RespValue(200, "success", list);
     }
+
+    /**
+     * 根据开包任务uid查询上传的图片
+     *
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/findPictureByTaskUid.do")
+    public RespValue findPictureByTaskUid(@RequestBody ReqValue reqValue) {
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        List<Unpack> list = unpackService.findPictureByTaskUid(jsonObject.getString("taskUid"));
+        // 判断是否存在该任务
+        if (list == null){
+            return new RespValue(500,"The Incorrect task uid ",null);
+        }
+
+        Map<Integer,String> map = new HashMap();
+        // 存在该任务
+        for (int i = 0; i < list.size(); i++) {
+            // 判断是否存在照片
+            if (!StringUtils.isBlank(list.get(i).getImage())){
+                try {
+                    String localImage = UploadUtils.getLocalImage(list.get(i).getImage());
+                    map.put(i,localImage);
+                } catch (IOException e) {
+                    return new RespValue(500,"error",null);
+                }
+            }
+        }
+        return new RespValue(200,"success",map);
+    }
+
 
 }

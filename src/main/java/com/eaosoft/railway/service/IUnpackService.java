@@ -19,4 +19,6 @@ public interface IUnpackService extends IService<Unpack> {
     int addUnpackInfo(Unpack unpack);
 
     PageInfo<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName, String createTime);
+
+    List<Unpack> findPictureByTaskUid(String taskUid);
 }

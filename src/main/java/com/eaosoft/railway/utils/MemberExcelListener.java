@@ -7,7 +7,9 @@ import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 
+import javax.xml.transform.Source;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 监听数据导入
@@ -32,8 +34,21 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
     @Override
     public void invoke(User users, AnalysisContext analysisContext) {
 
-        if (users.getRealName().equals("张XXXX") || users.getIdCard().equals("411524************")) {
+
+        String idCard = users.getIdCard();
+        List<User> list = userService.findByIdCard(idCard);
+
+
+            // 根据身份证号码判断是不是导出的样本，若是则不添加
+        if (idCard.contains("*")) {
+
+        }
+        if (list.size() != 0 ) {
+            // 判断是否已存在相同的身份证号，若身份证号相同，则认定为同一人，不在添加
+
+            System.out.println("============");
         } else {
+            System.out.println("``````````````");
             User user = new User();
             user.setUsername(String.valueOf(System.currentTimeMillis()));
             user.setRealName(users.getRealName());

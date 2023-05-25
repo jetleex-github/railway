@@ -42,9 +42,6 @@ public class MyShiroConfig {
         //不要用HashMap来创建Map，会有某些配置失效，要用链表的LinkedHashmap
         Map<String,String> filterRuleMap=new LinkedHashMap<>();
 
-
-
-
         /* 配置映射关系*/
         //authc:所有url都必须认证通过才可以访问; anon:所有url都都可以匿名访问
         filterRuleMap.put("/","anon");
@@ -60,7 +57,8 @@ public class MyShiroConfig {
         filterRuleMap.put("/railway/picture/drawingJudgment.do","anon");
 
         filterRuleMap.put("/railway/user/exportModel.do","anon");
-        //filterRuleMap.put("/railway/**","authc");
+        // 所有
+       // filterRuleMap.put("/railway/**","authc");
         //拦截所有接口
         filterRuleMap.put("/**","jwt");
 
@@ -69,7 +67,6 @@ public class MyShiroConfig {
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterRuleMap);
         return shiroFilterFactoryBean;
     }
-
 
 
     @Bean

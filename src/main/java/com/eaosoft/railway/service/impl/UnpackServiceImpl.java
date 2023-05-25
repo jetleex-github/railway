@@ -1,5 +1,6 @@
 package com.eaosoft.railway.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.eaosoft.railway.entity.Unpack;
 import com.eaosoft.railway.mapper.UnpackMapper;
@@ -37,5 +38,13 @@ public class UnpackServiceImpl extends ServiceImpl<UnpackMapper, Unpack> impleme
         List<Unpack> list = unpackMapper.findUnpackInfo(stationName,createTime);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
+    }
+
+    @Override
+    public List<Unpack> findPictureByTaskUid(String taskUid) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("task_uid",taskUid);
+        List list = unpackMapper.selectList(wrapper);
+        return list;
     }
 }
