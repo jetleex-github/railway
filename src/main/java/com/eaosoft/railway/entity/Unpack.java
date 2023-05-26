@@ -38,6 +38,9 @@ public class Unpack implements Serializable {
     @ApiModelProperty("开包任务uid")
     private String taskUid;
 
+    @ApiModelProperty("设备序列号")
+    private String equipUid;
+
     @ApiModelProperty("旅客身份证号")
     private String cardId;
 

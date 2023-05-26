@@ -48,11 +48,14 @@ public class UnpackController {
      */
     @PostMapping("/addUnpackInfo.do")
     public RespValue addUnpackInfo(@RequestParam("file") MultipartFile[] files, String taskUid, String username, String cardId) {
+        LocalDateTime now = LocalDateTime.now();
         for (MultipartFile file : files) {
             Unpack unpack = new Unpack();
             unpack.setTaskUid(taskUid);
             unpack.setUsername(username);
             unpack.setCardId(cardId);
+            unpack.setCreateTime(now);
+            unpack.setUpdateTime(LocalDateTime.now());
             String image = "";
             try {
                 // 将开包的图片上传至服务器，并保存照片地址
@@ -60,8 +63,7 @@ public class UnpackController {
                 // 添加照片地址
                 unpack.setImage(image);
 
-                unpack.setCreateTime(LocalDateTime.now());
-                unpack.setUpdateTime(LocalDateTime.now());
+
                 // 保存开包信息
                 unpackService.addUnpackInfo(unpack);
             } catch (Exception e) {
@@ -86,6 +88,7 @@ public class UnpackController {
         Integer currentPage = jsonObject.getInteger("currentPage");
         String stationName = jsonObject.getString("stationName");
         String createTime = jsonObject.getString("createTime");
+        String endTime = jsonObject.getString("endTime");
 
         // System.out.println("pageSize:" + pageSize + ",currentPage" + currentPage + ",stationName" + stationName + ",createTime" + createTime);
         PageInfo<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationName, createTime);

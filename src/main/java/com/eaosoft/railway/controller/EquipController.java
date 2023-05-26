@@ -208,8 +208,8 @@ public class EquipController {
     public RespValue equipRepair(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-        String serialNo = jsonObject.getString("serialNo");
-        int i = equipService.equipRepair(serialNo);
+        String equipUid = jsonObject.getString("equipUid");
+        int i = equipService.equipRepair(equipUid);
         if (i != 0) {
             return new RespValue(200, "success", null);
         }
@@ -226,8 +226,8 @@ public class EquipController {
     public RespValue equipDel(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
-        String serialNo = jsonObject.getString("serialNo");
-        int i = equipService.equipDel(serialNo);
+        String equipUid = jsonObject.getString("equipUid");
+        int i = equipService.equipDel(equipUid);
         if (i != 0) {
             return new RespValue(200, "success", null);
         }
@@ -245,14 +245,17 @@ public class EquipController {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Equip equip = new Equip();
-        if (StringUtils.isBlank(jsonObject.getString("uid"))){
-            return new RespValue(500,"The uid cannot empty",null);
+        if (StringUtils.isBlank(jsonObject.getString("uid"))) {
+            return new RespValue(500, "The uid cannot empty", null);
         }
         equip.setUid(jsonObject.getString("uid"));
         equip.setProducer(jsonObject.getString("producer"));
+        String ipAddr = jsonObject.getString("ipAddr");
+        //equipService.findEquipByIp(ipAddr);
         equip.setIpAddr(jsonObject.getString("ipAddr"));
+
         int i = equipService.updateEquip(equip);
-        if (i != 0){
+        if (i != 0) {
             return new RespValue(200, "success", null);
         }
         return new RespValue(500, "error", null);
@@ -260,17 +263,18 @@ public class EquipController {
 
     /**
      * 根据条件查询该站点下的设备
+     *
      * @param reqValue
      * @return
      */
     @PostMapping("/selectEquipByCondition.do")
-    public RespValue selectEquipByCondition(@RequestBody ReqValue reqValue){
+    public RespValue selectEquipByCondition(@RequestBody ReqValue reqValue) {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         String stationName = jsonObject.getString("stationName");
         // 判断站点名称是否存在
-        if (StringUtils.isBlank(stationName)){
-            return new RespValue(500,"The stationName cannot empty",null);
+        if (StringUtils.isBlank(stationName)) {
+            return new RespValue(500, "The stationName cannot empty", null);
         }
         // 通过站点名称获取站点信息
         Station station = stationService.findStation(stationName);
@@ -283,7 +287,27 @@ public class EquipController {
         equip.setState(jsonObject.getInteger("state"));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
-        PageInfo<Equip> pageInfo =equipService.selectEquipByCondition(equip,pageSize,currentPage);
-        return new RespValue(200,"success",pageInfo);
+        PageInfo<Equip> pageInfo = equipService.selectEquipByCondition(equip, pageSize, currentPage);
+        return new RespValue(200, "success", pageInfo);
+    }
+
+    /**
+     * 查询该线路下所有设备信息
+     *
+     * @param reqValue
+     * @return
+     */
+    @PostMapping("/findAllEquip.do")
+    public RespValue findAllEquip(@RequestBody ReqValue reqValue) {
+        Object requestDatas = reqValue.getRequestDatas();
+        JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
+        String routeName = jsonObject.getString("routeName");
+        Integer pageSize = jsonObject.getInteger("pageSize");
+        Integer currentPage = jsonObject.getInteger("currentPage");
+        String serialNo = jsonObject.getString("serialNo");
+        Integer state = jsonObject.getInteger("state");
+        String equipName = jsonObject.getString("equipName");
+        PageInfo<Equip> pageInfo = equipService.findAllEquip(pageSize, currentPage, routeName,serialNo,state,equipName);
+        return new RespValue(200, "success", pageInfo);
     }
 }

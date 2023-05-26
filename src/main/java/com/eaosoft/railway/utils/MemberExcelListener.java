@@ -46,9 +46,9 @@ public class MemberExcelListener extends AnalysisEventListener<User> {
         if (list.size() != 0 ) {
             // 判断是否已存在相同的身份证号，若身份证号相同，则认定为同一人，不在添加
 
-            System.out.println("============");
+
         } else {
-            System.out.println("``````````````");
+
             User user = new User();
             user.setUsername(String.valueOf(System.currentTimeMillis()));
             user.setRealName(users.getRealName());

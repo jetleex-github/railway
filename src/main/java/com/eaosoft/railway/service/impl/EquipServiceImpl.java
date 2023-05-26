@@ -100,15 +100,15 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
     }
 
     @Override
-    public int equipRepair(String serialNo) {
-        int i = equipMapper.equipRepair(serialNo);
+    public int equipRepair(String equipUid) {
+        int i = equipMapper.equipRepair(equipUid);
         return i;
     }
 
     @Override
-    public int equipDel(String serialNo) {
+    public int equipDel(String equipUid) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("serial_no",serialNo);
+        wrapper.eq("uid",equipUid);
         int i = equipMapper.delete(wrapper);
         return i;
     }
@@ -140,5 +140,14 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
     public Equip findEquipByEquipUid(String equipUid) {
         Equip equip = equipMapper.selectById(equipUid);
         return equip;
+    }
+
+    @Override
+    public PageInfo<Equip> findAllEquip(Integer pageSize, Integer currentPage, String routeName,String serialNo,Integer state,String equipName) {
+        PageHelper.startPage(currentPage,pageSize);
+
+        List<Equip> list = equipMapper.selectAllEquip(routeName,serialNo,state,equipName);
+        PageInfo<Equip> pageInfo = new PageInfo(list);
+        return pageInfo;
     }
 }

@@ -28,4 +28,9 @@ public interface EquipMapper extends BaseMapper<Equip> {
                                         @Param("equipName") String equipName,
                                         @Param("serialNo") String serialNo,
                                         @Param("state") Integer state);
+
+    List<Equip> selectAllEquip(@Param("routeName") String routeName,
+                               @Param("serialNo") String serialNo,
+                               @Param("state") Integer state,
+                               @Param("equipName") String equipName);
 }

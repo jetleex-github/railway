@@ -31,9 +31,9 @@ public interface IEquipService extends IService<Equip> {
 
     Equip findEquipBySerialNo(String serialNo);
 
-    int equipRepair(String serialNo);
+    int equipRepair(String equipUid);
 
-    int equipDel(String serialNo);
+    int equipDel(String equipUid);
 
     Equip equipLogin(String username);
 
@@ -42,4 +42,7 @@ public interface IEquipService extends IService<Equip> {
     PageInfo<Equip> selectEquipByCondition(Equip equip, Integer pageSize, Integer currentPage);
 
     Equip findEquipByEquipUid(String equipUid);
+
+    PageInfo<Equip> findAllEquip(Integer pageSize, Integer currentPage,
+                                 String routeName,String serialNo,Integer state,String equipName);
 }

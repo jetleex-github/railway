@@ -4,7 +4,7 @@
     <update id="equipRepair">
         update rw_equip
         set repair = 0
-        where serial_no = #{serialNo}
+        where uid = #{equipUid}
           and is_deleted = 0
     </update>
     <select id="selectEquipName" resultType="java.lang.String">
@@ -32,6 +32,33 @@
             </if>
             <if test="state != null">
                 and state = #{state}
+            </if>
+        </where>
+    </select>
+    <select id="selectAllEquip" resultType="com.eaosoft.railway.entity.Equip">
+        SELECT e.serial_no,
+        e.equip_name,
+        e.producer,
+        e.create_time,
+        s.station_name stationUid,
+        e.code,
+        e.state,
+        e.uid,
+        e.ip_addr
+        FROM rw_equip e
+        join rw_station s
+        <where>
+            and e.station_uid = s.uid
+            and e.route_name = #{routeName}
+            and e.is_deleted = 0
+            <if test="serialNo != '' and serialNo != null">
+                and e.serial_no = #{serialNo}
+            </if>
+            <if test="state != null">
+                and e.state = #{state}
+            </if>
+            <if test="equipName != null || equipName != ''">
+                and e.equip_name = #{equipName}
             </if>
         </where>
     </select>
