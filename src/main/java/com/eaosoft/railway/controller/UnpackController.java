@@ -3,16 +3,19 @@ package com.eaosoft.railway.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.eaosoft.railway.entity.Equip;
 import com.eaosoft.railway.entity.Unpack;
+import com.eaosoft.railway.service.IEquipService;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUnpackService;
-import com.eaosoft.railway.utils.*;
+import com.eaosoft.railway.utils.ReqValue;
+import com.eaosoft.railway.utils.RespValue;
+import com.eaosoft.railway.utils.UploadUtils;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -37,6 +40,9 @@ public class UnpackController {
     @Autowired
     private IStationService stationService;
 
+    @Autowired
+    private IEquipService equipService;
+
     /**
      * 添加开包结果
      *
@@ -47,7 +53,13 @@ public class UnpackController {
      * @return
      */
     @PostMapping("/addUnpackInfo.do")
-    public RespValue addUnpackInfo(@RequestParam("file") MultipartFile[] files, String taskUid, String username, String cardId) {
+    public RespValue addUnpackInfo(@RequestParam("file") MultipartFile[] files, String taskUid,
+                                   String username, String cardId,String equipUid,
+                                   String result,String checkUser) {
+        if (StringUtils.isBlank(taskUid)){
+            return new RespValue(500,"The taskUid cannot empty",null);
+        }
+        Equip equip = equipService.findEquipByEquipUid(equipUid);
         LocalDateTime now = LocalDateTime.now();
         for (MultipartFile file : files) {
             Unpack unpack = new Unpack();
@@ -56,6 +68,11 @@ public class UnpackController {
             unpack.setCardId(cardId);
             unpack.setCreateTime(now);
             unpack.setUpdateTime(LocalDateTime.now());
+            unpack.setEquipSerialNo(equip.getSerialNo());
+            unpack.setRouteName("五号线");
+            unpack.setResult(result);
+            unpack.setCheckUser(checkUser);
+            unpack.setStationExit(equip.getStationExitUid());
             String image = "";
             try {
                 // 将开包的图片上传至服务器，并保存照片地址
@@ -86,12 +103,20 @@ public class UnpackController {
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Integer pageSize = jsonObject.getInteger("pageSize");
         Integer currentPage = jsonObject.getInteger("currentPage");
-        String stationName = jsonObject.getString("stationName");
+        String stationExit = jsonObject.getString("stationExit");
         String createTime = jsonObject.getString("createTime");
+
         String endTime = jsonObject.getString("endTime");
+        String taskUid = jsonObject.getString("taskUid");
+        String result = jsonObject.getString("result");
+        String checkUser = jsonObject.getString("checkUser");
+        String equipSerialNo = jsonObject.getString("equipSerialNo");
+        String routeName = jsonObject.getString("routeName");
+
 
         // System.out.println("pageSize:" + pageSize + ",currentPage" + currentPage + ",stationName" + stationName + ",createTime" + createTime);
-        PageInfo<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationName, createTime);
+        PageInfo<Unpack> list = unpackService.findUnpackInfo(pageSize, currentPage, stationExit, createTime,
+                endTime,taskUid,result,checkUser,equipSerialNo,routeName);
         return new RespValue(200, "success", list);
     }
 

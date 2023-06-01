@@ -1,31 +1,24 @@
 package com.eaosoft.railway.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IUserService;
-import com.eaosoft.railway.utils.TokenUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
  
 @Slf4j
 public class UrlFilter extends PathMatchingFilter {

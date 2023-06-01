@@ -58,7 +58,7 @@ public class AlarmManageController {
         alarm.setStationUid(equip.getStationUid());
         alarm.setEquipName(equip.getEquipName());
 
-        if (jsonObject.getInteger("grade") != null) {
+        if (jsonObject.getInteger("grade") != null ) {
             alarm.setGrade(jsonObject.getInteger("grade"));
         }
         if (!StringUtils.isBlank(jsonObject.getString("ipAddr"))) {

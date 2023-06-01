@@ -3,21 +3,66 @@
 <mapper namespace="com.eaosoft.railway.mapper.UnpackMapper">
 
     <select id="findUnpackInfo" resultType="com.eaosoft.railway.entity.Unpack">
-        SELECT DISTINCT	u.task_uid,u.username,u.card_id,s.create_time FROM rw_unpack u
-        JOIN (
-            SELECT  pb.uid,pb.create_time  FROM rw_picture pb
-            JOIN ( SELECT uid, station_name FROM rw_station ) sa
-            <where>
-                 AND station_uid = sa.uid
-                <if test="stationName != null and stationName != ''">
-                    AND station_name like '%${stationName}%'
-                </if>
-                <if test="createTime != '' and createTime != null">
-                    AND create_time >= #{createTime}
-                </if>
+        <!-- SELECT DISTINCT	u.task_uid,u.username,u.card_id,u.create_time FROM rw_unpack u
+         JOIN (
+             SELECT  pb.uid,pb.create_time  FROM rw_picture pb
+             JOIN ( SELECT uid, station_name FROM rw_station ) sa
+             <where>
+                  AND station_uid = sa.uid
+                 <if test="stationName != null and stationName != ''">
+                     AND station_name like '%${stationName}%'
+                 </if>
+                 <if test="createTime != '' and createTime != null">
+                     AND create_time >= #{createTime}
+                 </if>
 
-            </where>
-        ) s ON s.uid = u.task_uid
+             </where>
+         ) s ON s.uid = u.task_uid-->
+
+        SELECT
+        *
+        FROM
+        (
+        SELECT DISTINCT
+        u.task_uid,
+        u.username,
+        u.create_time,
+        u.result,
+        u.equip_serial_no,
+        u.route_name,
+        s.station_exit,
+        u.check_user
+        FROM
+        rw_unpack u
+        JOIN ( SELECT se.uid, se.station_exit FROM rw_station_exit se JOIN rw_unpack r ON r.station_exit = se.uid ) s ON
+        u.station_exit = s.uid
+        ) es
+        <where>
+            <if test="taskUid != null || taskUid != ''">
+                and task_uid like '%${taskUid}%'
+            </if>
+            <if test="stationExit != null || stationExit != ''">
+                and station_exit like '%${stationExit}%'
+            </if>
+            <if test="createTime != null ">
+                and es.create_time &gt;= #{createTime}
+            </if>
+            <if test="endTime != null ">
+                and es.create_time &lt;= #{endTime}
+            </if>
+            <if test="result != null || result != ''">
+                and `result` like '%${result}%'
+            </if>
+            <if test="checkUser != null || checkUser != ''">
+                and check_user like '%${checkUser}%'
+            </if>
+            <if test="equipSerialNo != null || equipSerialNo != ''">
+                and equip_serial_no like '%${equipSerialNo}%'
+            </if>
+            <if test="routeName != null || routeName != ''">
+                and route_name like '%${routeName}%'
+            </if>
+        </where>
 
     </select>
 </mapper>

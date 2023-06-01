@@ -33,9 +33,13 @@ public class UnpackServiceImpl extends ServiceImpl<UnpackMapper, Unpack> impleme
     }
 
     @Override
-    public PageInfo<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationName, String createTime) {
+    public PageInfo<Unpack> findUnpackInfo(Integer pageSize, Integer currentPage, String stationExit, String createTime,
+                                           String endTime, String taskUid, String result, String checkUser,
+                                           String equipSerialNo,String routeName) {
         PageHelper.startPage(currentPage,pageSize);
-        List<Unpack> list = unpackMapper.findUnpackInfo(stationName,createTime);
+        System.out.println("createTime=="+createTime+",endTime=="+endTime);
+        List<Unpack> list = unpackMapper.findUnpackInfo(stationExit,createTime,endTime,
+                taskUid,result,checkUser,equipSerialNo,routeName);
         PageInfo pageInfo = new PageInfo(list);
         return pageInfo;
     }

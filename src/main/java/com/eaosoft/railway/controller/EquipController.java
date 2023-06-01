@@ -145,18 +145,31 @@ public class EquipController {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Equip equip = new Equip();
-        if (StringUtils.isBlank(jsonObject.getString("ipAddr"))) {
-            return new RespValue(500, "The ipAddr cannot empty", null);
-        }
-        equip.setIpAddr(jsonObject.getString("ipAddr"));
+
+      // 设置站口
         if (StringUtils.isBlank(jsonObject.getString("stationExitUid"))) {
             return new RespValue(500, "The stationExit cannot empty", null);
         }
         equip.setStationExitUid(jsonObject.getString("stationExitUid"));
-        if (StringUtils.isBlank(jsonObject.getString("uid"))) {
-            return new RespValue(500, "The uid cannot empty", null);
+
+//        // 判断IP是否为空
+//        if (!StringUtils.isBlank(jsonObject.getString("ipAddr"))) {
+//            // 判断该IP是否存在
+//            Equip e = equipService.findEquipByEquipUid(jsonObject.getString("equipUid"));
+//            String ipAddr = jsonObject.getString("ipAddr");
+//            Equip equip1 = equipService.findEquipByIp(ipAddr, e.getStationUid());
+//            if (equip1 != null && !(equip1.getUid().equals(jsonObject.getString("equipUid")))) {
+//                return new RespValue(500, "The ipAddr already exist", null);
+//            }
+//            equip.setIpAddr(jsonObject.getString("ipAddr"));
+//        }
+
+
+        // 获取设备uid
+        if (StringUtils.isBlank(jsonObject.getString("equipUid"))) {
+            return new RespValue(500, "The equipUid cannot empty", null);
         }
-        equip.setUid(jsonObject.getString("uid"));
+        equip.setUid(jsonObject.getString("equipUid"));
         // 修改绑定状态
         equip.setCode(1);
 
@@ -179,16 +192,15 @@ public class EquipController {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Equip equip = new Equip();
-        String uid = jsonObject.getString("uid");
+        String uid = jsonObject.getString("equipUid");
         if (StringUtils.isBlank(uid)) {
             return new RespValue(500, "The uid cannot empty", null);
         }
         equip.setUid(uid);
-        equip.setIpAddr("");
         equip.setStationExitUid("");
-        // 修改在线状态和绑定状态
+        // 修改在线状态为离线
         equip.setState(0);
-        //修改绑定状态
+        //修改绑定状态为未绑定
         equip.setCode(0);
 
         int i = equipService.removeBound(equip);
@@ -245,14 +257,20 @@ public class EquipController {
         Object requestDatas = reqValue.getRequestDatas();
         JSONObject jsonObject = JSONObject.parseObject(JSON.toJSONString(requestDatas));
         Equip equip = new Equip();
-        if (StringUtils.isBlank(jsonObject.getString("uid"))) {
+        if (StringUtils.isBlank(jsonObject.getString("equipUid"))) {
             return new RespValue(500, "The uid cannot empty", null);
         }
-        equip.setUid(jsonObject.getString("uid"));
+        equip.setUid(jsonObject.getString("equipUid"));
         equip.setProducer(jsonObject.getString("producer"));
-        String ipAddr = jsonObject.getString("ipAddr");
-        //equipService.findEquipByIp(ipAddr);
-        equip.setIpAddr(jsonObject.getString("ipAddr"));
+
+//        // 判断该IP是否存在
+//        Equip e = equipService.findEquipByEquipUid(jsonObject.getString("equipUid"));
+//        String ipAddr = jsonObject.getString("ipAddr");
+//        Equip equip1 = equipService.findEquipByIp(ipAddr,e.getStationUid());
+//        if (equip1 != null && !(equip1.getUid().equals(jsonObject.getString("equipUid")))){
+//            return new RespValue(500,"The ipAddr already exist",null);
+//        }
+//        equip.setIpAddr(jsonObject.getString("ipAddr"));
 
         int i = equipService.updateEquip(equip);
         if (i != 0) {

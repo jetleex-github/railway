@@ -1,19 +1,14 @@
 package com.eaosoft.railway.utils;
 
-import com.alibaba.fastjson.JSON;
-import com.eaosoft.railway.entity.User;
-//import org.hibernate.boot.jaxb.SourceType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

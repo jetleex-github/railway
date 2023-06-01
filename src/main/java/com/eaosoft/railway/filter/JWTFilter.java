@@ -4,19 +4,17 @@ package com.eaosoft.railway.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.eaosoft.railway.entity.JWTToken;
+import com.eaosoft.railway.entity.Result;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.utils.RedisUtil;
 import com.eaosoft.railway.utils.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.eaosoft.railway.entity.JWTToken;
-import com.eaosoft.railway.entity.Result;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

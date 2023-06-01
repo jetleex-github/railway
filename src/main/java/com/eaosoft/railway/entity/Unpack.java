@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,7 +40,7 @@ public class Unpack implements Serializable {
     private String taskUid;
 
     @ApiModelProperty("设备序列号")
-    private String equipUid;
+    private String equipSerialNo;
 
     @ApiModelProperty("旅客身份证号")
     private String cardId;
@@ -49,6 +50,18 @@ public class Unpack implements Serializable {
 
     @ApiModelProperty("开包图片")
     private String image;
+
+    @ApiModelProperty("线路名称")
+    private String routeName;
+
+    @ApiModelProperty("站口")
+    private String stationExit;
+
+    @ApiModelProperty("开包结果")
+    private String result;
+
+    @ApiModelProperty("复检人姓名")
+    private String checkUser;
 
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")

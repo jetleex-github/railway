@@ -4,24 +4,18 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 import com.eaosoft.railway.entity.Role;
 import com.eaosoft.railway.entity.Station;
 import com.eaosoft.railway.entity.User;
-import com.eaosoft.railway.service.ILoginLogService;
 import com.eaosoft.railway.service.IRoleService;
 import com.eaosoft.railway.service.IStationService;
 import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.MD5Utils;
-
 import com.eaosoft.railway.utils.ReqValue;
 import com.eaosoft.railway.utils.RespValue;
-
 import com.eaosoft.railway.utils.TokenUtil;
 import com.eaosoft.railway.vo.UserVo;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

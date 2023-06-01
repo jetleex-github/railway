@@ -1,7 +1,6 @@
 package com.eaosoft.railway.config;
 
 import com.eaosoft.railway.filter.JWTFilter;
-import com.eaosoft.railway.filter.URLPathMatchingFilter;
 import com.eaosoft.railway.filter.UrlFilter;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;

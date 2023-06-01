@@ -150,4 +150,13 @@ public class EquipServiceImpl extends ServiceImpl<EquipMapper, Equip> implements
         PageInfo<Equip> pageInfo = new PageInfo(list);
         return pageInfo;
     }
+
+    @Override
+    public Equip findEquipByIp(String ipAddr,String stationUid) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("ip_addr",ipAddr);
+        wrapper.eq("station_uid",stationUid);
+        Equip equip = equipMapper.selectOne(wrapper);
+        return equip;
+    }
 }

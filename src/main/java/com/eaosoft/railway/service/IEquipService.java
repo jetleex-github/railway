@@ -45,4 +45,6 @@ public interface IEquipService extends IService<Equip> {
 
     PageInfo<Equip> findAllEquip(Integer pageSize, Integer currentPage,
                                  String routeName,String serialNo,Integer state,String equipName);
+
+    Equip findEquipByIp(String ipAddr,String stationUid);
 }

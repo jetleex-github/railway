@@ -2,13 +2,11 @@ package com.eaosoft.railway.filter;
 
 
 import com.alibaba.fastjson.JSON;
-import com.eaosoft.railway.utils.TokenUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.PathMatchingFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
@@ -26,9 +24,6 @@ import java.util.Map;
 public class URLPathMatchingFilter extends PathMatchingFilter {
     @Resource
     private StringRedisTemplate redisTemplate;
-
-//    @Autowired
-//    private Anon anon;
 
     @Override
     protected boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {

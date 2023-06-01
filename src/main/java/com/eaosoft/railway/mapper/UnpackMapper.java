@@ -18,5 +18,12 @@ import java.util.List;
 @Mapper
 public interface UnpackMapper extends BaseMapper<Unpack> {
 
-    List<Unpack> findUnpackInfo(@Param("stationName") String stationName,@Param("createTime") String createTime);
+    List<Unpack> findUnpackInfo(@Param("stationExit") String stationExit,
+                                @Param("createTime") String createTime,
+                                @Param("endTime") String endTime,
+                                @Param("taskUid")String taskUid,
+                                @Param("result")String result,
+                                @Param("checkUser")String checkUser,
+                                @Param("equipSerialNo")String equipSerialNo,
+                                @Param("routeName") String routeName);
 }

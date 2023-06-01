@@ -11,13 +11,7 @@ import com.eaosoft.railway.service.IUserService;
 import com.eaosoft.railway.utils.*;
 import com.eaosoft.railway.vo.RespVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.eaosoft.railway.entity.Result;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.RedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/railway/login")
@@ -62,7 +55,19 @@ public class LoginController {
 
         //去数据库拿密码验证用户名密码
         User user = userService.login(username, MD5Utils.md5(password));
+        // 判断该账户是否存在
         if (user != null) {
+
+            // 判断该账户是否被冻结
+            if (user.getState().equals(0)){
+                // 登录失败设置登陆状态
+                loginLog.setState("失败");
+                // 将登录日志添加到数据库
+                loginLogService.insertLoginLog(loginLog);
+
+                return new RespValue(500,"The account has been frozen",null);
+            }
+
             Long currentTimeMillis = System.currentTimeMillis();
             String token = TokenUtil.sign(username, password, currentTimeMillis);
 

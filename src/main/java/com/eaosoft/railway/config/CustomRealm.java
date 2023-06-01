@@ -1,6 +1,5 @@
 package com.eaosoft.railway.config;
 
-import com.alibaba.fastjson.JSON;
 import com.eaosoft.railway.entity.JWTToken;
 import com.eaosoft.railway.entity.User;
 import com.eaosoft.railway.service.IUserService;
@@ -16,10 +15,6 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @ Program       :  com.ljnt.blog.config.CustomRealm
@@ -47,12 +42,12 @@ public class CustomRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-       System.out.println("用户授权");
+//       System.out.println("用户授权");
 //        System.out.println("===>>>"+principalCollection.toString());
-//        String username=TokenUtil.getUsername(principalCollection.toString());
-//        User user = userService.selectByUsername(username);
-//        SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
-//        info.addRole(username);
+        String username=TokenUtil.getUsername(principalCollection.toString());
+        User user = userService.selectByUsername(username);
+        SimpleAuthorizationInfo info= new SimpleAuthorizationInfo();
+        info.addRole(username);
 
        // Set<String> roles = user.getUsername();
         // 正确的业务流程是到数据库拿该用户的权限再去进行授权的，这里只是简单的直接授权

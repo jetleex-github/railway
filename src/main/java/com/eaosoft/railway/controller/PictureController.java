@@ -3,7 +3,6 @@ package com.eaosoft.railway.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.eaosoft.mqtt.MQTTServer;
 import com.eaosoft.railway.entity.Equip;
 import com.eaosoft.railway.entity.Picture;
 import com.eaosoft.railway.service.IEquipService;
@@ -20,11 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 

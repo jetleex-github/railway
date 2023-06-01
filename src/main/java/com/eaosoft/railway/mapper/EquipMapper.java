@@ -20,7 +20,7 @@ import java.util.List;
 public interface EquipMapper extends BaseMapper<Equip> {
     List<String> selectEquipName(@Param("routeName")String routeName);
 
-    int equipRepair(@Param("serialNo")String serialNo);
+    int equipRepair(@Param("equipUid")String equipUid);
 
     Equip equipLogin(@Param("serialNo")String username);
 

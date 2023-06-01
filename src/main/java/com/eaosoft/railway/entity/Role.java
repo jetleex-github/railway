@@ -1,6 +1,5 @@
 package com.eaosoft.railway.entity;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
